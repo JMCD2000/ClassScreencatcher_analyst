@@ -2,13 +2,62 @@ Option Compare Database
 Option Explicit
 
 
+Private Sub cmdAppendDateCoulmns_Click()
+' This will append the date columns into the data tables
+Dim contiuneTime As Boolean
+Dim thisProcedure As String
+
+thisProcedure = "cmdAppendDateCoulmns_Click"
+contiuneTime = startTime(thisProcedure)
+
+'Call the SetListAndVars Module
+AddingToMyDateLists 'Run the list builder
+
+'Call the AlterTablesAndColumns Module _
+and run through the Sub
+AppendDateFieldsToDataTables
+
+If contiuneTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf contiuneTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
+
+End Sub
+
+
+Private Sub cmdRunAll_Click()
+' This will run all the updates with one click
+Dim contiuneTime As Boolean
+Dim thisProcedure As String
+
+thisProcedure = "cmdRunAll_Click"
+contiuneTime = startTime(thisProcedure)
+
+'Call the SetListAndVars Module
+AddingToMyDateLists 'Run the list builder
+
+If contiuneTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf contiuneTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
+
+End Sub
+
 Private Sub cmdSet_TABLE_Combined_Screenings_Click()
 'This is to load or reload the screenings into the Combined_Screenings Table
-Dim myStartTime As Double
-Dim myRunTime As Double
-myStartTime = Timer
+Dim contiuneTime As Boolean
+Dim thisProcedure As String
 
-DoCmd.Echo False, "VBA is running."
+thisProcedure = "cmdSet_TABLE_Combined_Screenings_Click"
+contiuneTime = startTime(thisProcedure)
 
 'Call the SetListAndVars Module
 AddingToMyDateLists 'Run the list builder
@@ -26,20 +75,25 @@ SetTrialCardSplits_CS 'This changes the screening from <Not Found> to <SPLIT>
 ClearMyDateLists 'Empty the lists that were used
 CurrentTable = Empty
 
-myRunTime = Round(Timer - myStartTime, 2)
-Debug.Print ("Function cmdSet_TABLE_Combined_Screenings_Click run time: " & myRunTime & " Seconds.")
-DoCmd.Echo True, ("VBA has completed running. " & myRunTime & " Seconds.")
+If contiuneTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf contiuneTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
 
 End Sub
 
 
 Private Sub cmdSet_TABLE_Screenings_Only_Click()
 'This is to load or reload the screenings into the Screenings_Only Table
-Dim myStartTime As Double
-Dim myRunTime As Double
-myStartTime = Timer
+Dim contiuneTime As Boolean
+Dim thisProcedure As String
 
-DoCmd.Echo False, "VBA is running."
+thisProcedure = "cmdSet_TABLE_Screenings_Only_Click"
+contiuneTime = startTime(thisProcedure)
 
 'Call the SetListAndVars Module
 AddingToMyDateLists 'Run the list builder
@@ -57,20 +111,25 @@ SetTrialCardSplits_SO 'This changes the screening from <Not Found> to <SPLIT>
 ClearMyDateLists 'Empty the lists that were used
 CurrentTable = Empty
 
-myRunTime = Round(Timer - myStartTime, 2)
-Debug.Print ("Function cmdSet_TABLE_Screenings_Only_Click run time: " & myRunTime & " Seconds.")
-DoCmd.Echo True, ("VBA has completed running. " & myRunTime & " Seconds.")
+If contiuneTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf contiuneTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
 
 End Sub
 
 
 Private Sub cmdSet_TABLE_XX_Screen_Only_Click()
 'This is to load or reload the screenings into the XX_Screen_Only Table
-Dim myStartTime As Double
-Dim myRunTime As Double
-myStartTime = Timer
+Dim contiuneTime As Boolean
+Dim thisProcedure As String
 
-DoCmd.Echo False, "VBA is running."
+thisProcedure = "cmdSet_TABLE_XX_Screen_Only_Click"
+contiuneTime = startTime(thisProcedure)
 
 'Call the SetListAndVars Module
 AddingToMyDateLists 'Run the list builder
@@ -88,20 +147,25 @@ SetTrialCardSplits_XXSO 'This changes the screening from <Not Found> to <SPLIT>
 ClearMyDateLists 'Empty the lists that were used
 CurrentTable = Empty
 
-myRunTime = Round(Timer - myStartTime, 2)
-Debug.Print ("Function cmdSet_TABLE_XX_Screen_Only_Click run time: " & myRunTime & " Seconds.")
-DoCmd.Echo True, ("VBA has completed running. " & myRunTime & " Seconds.")
+If contiuneTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf contiuneTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
 
 End Sub
 
 
 Private Sub cmdSet_TABLE_TC_Screen_Agg_Click()
 'This is to load or reload the screenings into the TC_Screen_Agg Table
-Dim myStartTime As Double
-Dim myRunTime As Double
-myStartTime = Timer
+Dim contiuneTime As Boolean
+Dim thisProcedure As String
 
-DoCmd.Echo False, "VBA is running."
+thisProcedure = "cmdSet_TABLE_TC_Screen_Agg_Click"
+contiuneTime = startTime(thisProcedure)
 
 'Call the SetListAndVars Module
 AddingToMyDateLists 'Run the list builder
@@ -116,20 +180,25 @@ Build_and_Set_Aggregated_Screen_TCSA
 ClearMyDateLists 'Empty the lists that were used
 CurrentTable = Empty
 
-myRunTime = Round(Timer - myStartTime, 2)
-Debug.Print ("Function cmdSet_TABLE_TC_Screen_Agg_Click run time: " & myRunTime & " Seconds.")
-DoCmd.Echo True, ("VBA has completed running. " & myRunTime & " Seconds.")
+If contiuneTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf contiuneTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
 
 End Sub
 
 
 Private Sub cmdSetSparseMatrix_Click()
 'This is to load the Sparse Matrix tables
-Dim myStartTime As Double
-Dim myRunTime As Double
-myStartTime = Timer
+Dim contiuneTime As Boolean
+Dim thisProcedure As String
 
-DoCmd.Echo False, "VBA is running."
+thisProcedure = "cmdSetSparseMatrix_Click"
+contiuneTime = startTime(thisProcedure)
 
 'Call the SetListAndVars Module
 AddingToMyDateLists 'Run the list builder
@@ -155,19 +224,25 @@ ClearMyDateLists 'Empty the lists that were used
 CurrentTable = Empty
 SparseRefTable = Empty
 
-myRunTime = Round(Timer - myStartTime, 2)
-Debug.Print ("Function cmdSetSparseMatrix_Click run time: " & myRunTime & " Seconds.")
-DoCmd.Echo True, ("VBA has completed running. " & myRunTime & " Seconds.")
+If contiuneTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf contiuneTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
 
 End Sub
 
+
 Private Sub cmdSetXXSparseScreenMatrix_Click()
 'This is to load the Screen Sparse Matrix table
-Dim myStartTime As Double
-Dim myRunTime As Double
-myStartTime = Timer
+Dim contiuneTime As Boolean
+Dim thisProcedure As String
 
-DoCmd.Echo False, "VBA is running."
+thisProcedure = "cmdSetXXSparseScreenMatrix_Click"
+contiuneTime = startTime(thisProcedure)
 
 'Call the SetListAndVars Module
 AddingToMyDateLists 'Run the list builder
@@ -185,9 +260,13 @@ ClearMyDateLists 'Empty the lists that were used
 CurrentTable = Empty
 SparseRefTable = Empty
 
-myRunTime = Round(Timer - myStartTime, 2)
-Debug.Print ("Function cmdSetXXSparseScreenMatrix_Click run time: " & myRunTime & " Seconds.")
-DoCmd.Echo True, ("VBA has completed running. " & myRunTime & " Seconds.")
+If contiuneTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf contiuneTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
 
 End Sub
-
