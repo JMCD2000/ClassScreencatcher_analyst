@@ -183,4 +183,3 @@ dbs_Sparse.Close
 Debug.Print vbCrLf & "The Trial Cards Sparse Matrix Update Query completed." & vbCrLf
 
 End Sub
-
