@@ -3,11 +3,11 @@ This takes weekly reports and builds combined tables and metrics in Access and E
 
 I would have loved to have done this project in Python, but my work doesn't allow it. This runs using VBA, but the uploaded code is listed as VB to support some sort of code highlighting. The more tables there are the slower this runs. This is just an issue with using VBA and 32bit office. Again, it is what my work allows and has configured.
 
-I run weekly exports from a database that exports to excel to provide a status of open items, a burn rate, a class comparision, and responsibity for action. These weeks report are used to build the data tables. This ClassScreencatcher is then used to find the curn of rescreenings, changes in responsibility from Government to Contractor, Number of screenings and combinations, and other metrics. 
+I run weekly exports from a database that exports to excel to provide a status of open items, a burn rate, a class comparision, and responsibity for action. These weekly reports are used to build the data tables. This ClassScreencatcher_Analyst is then used to find the churn of rescreenings, changes in responsibility from Government to Contractor, Number of screenings and combinations, and other metrics. 
 
 Alot of this code was originaly started in Excel, but became unmanigible due to the number of calculations needed and run. Removing the computation to VBA at the Database reduced the Excel size from 76MB to 12MB.
 
-Below is the clean up needed before importing the Excel into Access. The Concat formulas are put into the last two or three columns. It was easier to pre populate these values in excel instead of adding more complexity in Access or the VBA.
+Below is the manual clean up that is needed before importing the Excel into Access. The Concat formulas are put into the last two or three columns. It was easier to pre populate these values in excel instead of adding more complexity in Access or the VBA.
 
 1) Column header cleanup
 (used on the Final only)
