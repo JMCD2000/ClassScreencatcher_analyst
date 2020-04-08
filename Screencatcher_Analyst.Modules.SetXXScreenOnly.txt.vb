@@ -342,4 +342,3 @@ myDateVarList = Empty
 ' Debug.Print vbCrLf & "The X/X Trial Cards Update Query completed." & vbCrLf
 
 End Sub
-
