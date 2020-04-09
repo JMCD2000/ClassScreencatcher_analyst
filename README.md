@@ -1,7 +1,7 @@
 # ClassScreencatcher_analyst
 This takes weekly reports and builds combined tables and metrics in Access and Excel with VBA
 
-I would have loved to have done this project in Python, but my work doesn't allow it. This runs using VBA, but the uploaded code is listed as VB to support some sort of code highlighting. The more tables there are the slower this runs. This is just an issue with using VBA and 32bit office. Again, it is what my work allows and has configured.
+I would have loved to have done this project in Python, but my work doesn't allow it. This runs using VBA written in Modules in MS Access 2016. The more tables there are the slower this runs. This is just an issue with using VBA and 32bit office. Again, it is what my work allows and has configured.
 
 I run weekly exports from a database that exports to excel to provide a status of open items, a burn rate, a class comparision, and responsibity for action. These weekly reports are used to build the data tables. This ClassScreencatcher_Analyst is then used to find the churn of rescreenings, changes in responsibility from Government to Contractor, Number of screenings and combinations, and other metrics. 
 
