@@ -166,18 +166,36 @@ For Each myDateVarList In allColumnsList
     & "AND ((" & CurrentTable & ".Event)='AT'));"
     ' Debug.Print "done with column table: " & myDateVarList & " For AT Event Late Adds."
 Next myDateVarList
+
+myDateVarList = Empty
+
 'This is fixing the Incorrect marking on days prior to the AT _
 there are list populated dates in this SQL Query!
+For Each myDateVarList In PreAT_DatesVarList
     CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
     & "SET " _
-    & "" & CurrentTable & ".[" & PreAT_DatesVarList(0) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreAT_DatesVarList(1) & "] = 'Not Found'" _
+    & "" & CurrentTable & ".[" & myDateVarList & "] = 'Not Found'" _
     & "WHERE " _
-    & "(((" & CurrentTable & ".[" & PreAT_DatesVarList(0) & "])='POST AT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreAT_DatesVarList(1) & "])='POST AT Trial') " _
+    & "(((" & CurrentTable & ".[" & myDateVarList & "])='POST AT Trial') " _
     & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
     & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))='01') " _
     & "AND ((" & CurrentTable & ".Event)='AT'));"
+    ' Debug.Print "done with column table: " & myDateVarList & " For AT Event Late Adds."
+Next myDateVarList
+    ' Debug.Print vbCrLf & "Completed re-setting prior to AT Event Screenings to Not Found."
+
+'This is fixing the Incorrect marking on days prior to the AT _
+there are list populated dates in this SQL Query!
+'    CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+'    & "SET " _
+'    & "" & CurrentTable & ".[" & PreAT_DatesVarList(0) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreAT_DatesVarList(1) & "] = 'Not Found'" _
+'    & "WHERE " _
+'    & "(((" & CurrentTable & ".[" & PreAT_DatesVarList(0) & "])='POST AT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreAT_DatesVarList(1) & "])='POST AT Trial') " _
+'    & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+'    & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))='01') " _
+'    & "AND ((" & CurrentTable & ".Event)='AT'));"
     ' Debug.Print vbCrLf & "Completed re-setting prior to AT Event Screenings to Not Found."
 
 myDateVarList = Empty
@@ -196,35 +214,53 @@ For Each myDateVarList In allColumnsList
     & "AND ((" & CurrentTable & ".Event)='FCT'));"
     ' Debug.Print "done with column table: " & myDateVarList & " For FCT Event Late Adds."
 Next myDateVarList
+
+myDateVarList = Empty
+
 'This is fixing the Incorrect marking on days prior to the FCT _
-there are hard coded dates in this SQL Query!
+these dates are in the "Pre..." lists.
+For Each myDateVarList In PreFCT_DatesVarList
     CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
     & "SET " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(0) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(1) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(2) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(3) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(4) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(5) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(6) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(7) & "] = 'Not Found', " _
-    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(8) & "] = 'Not Found'" _
+    & "" & CurrentTable & ".[" & myDateVarList & "] = 'Not Found'" _
     & "WHERE " _
-    & "(((" & CurrentTable & ".[" & PreFCT_DatesVarList(0) & "])='POST FCT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(1) & "])='POST FCT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(2) & "])='POST FCT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(3) & "])='POST FCT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(4) & "])='POST FCT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(5) & "])='POST FCT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(6) & "])='POST FCT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(7) & "])='POST FCT Trial') " _
-    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(8) & "])='POST FCT Trial') " _
+    & "(((" & CurrentTable & ".[" & myDateVarList & "])='POST FCT Trial') " _
     & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
     & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))='01') " _
     & "AND ((" & CurrentTable & ".Event)='FCT'));"
+    ' Debug.Print "done with column table: " & myDateVarList & " For FCT Event Late Adds."
+Next myDateVarList
+    ' Debug.Print vbCrLf & "Completed re-setting prior to FCT Event Screenings to Not Found."
+
+'This is fixing the Incorrect marking on days prior to the FCT _
+there are hard coded dates in this SQL Query!
+'    CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+'    & "SET " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(0) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(1) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(2) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(3) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(4) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(5) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(6) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(7) & "] = 'Not Found', " _
+'    & "" & CurrentTable & ".[" & PreFCT_DatesVarList(8) & "] = 'Not Found'" _
+'    & "WHERE " _
+'    & "(((" & CurrentTable & ".[" & PreFCT_DatesVarList(0) & "])='POST FCT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(1) & "])='POST FCT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(2) & "])='POST FCT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(3) & "])='POST FCT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(4) & "])='POST FCT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(5) & "])='POST FCT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(6) & "])='POST FCT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(7) & "])='POST FCT Trial') " _
+'    & "AND ((" & CurrentTable & ".[" & PreFCT_DatesVarList(8) & "])='POST FCT Trial') " _
+'    & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+'    & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))='01') " _
+'    & "AND ((" & CurrentTable & ".Event)='FCT'));"
     ' Debug.Print vbCrLf & "Completed re-setting prior to FCT Event Screenings to Not Found."
     
-'myDateVarList = Empty
+myDateVarList = Empty
 
 ' Debug.Print vbCrLf & "The Late Add Trial Cards Update Query completed." & vbCrLf
 
