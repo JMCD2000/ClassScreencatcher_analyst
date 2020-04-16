@@ -444,5 +444,6 @@ nonTrialsList.Clear
 trialsOnlyList.Clear
 allColumnsList.Clear
 allTablesList.Clear
+dataTablesList.Clear
 
 End Sub
