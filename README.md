@@ -7,6 +7,8 @@ I run weekly exports from a database that exports to excel to provide a status o
 
 Alot of this code was originaly started in Excel, but became unmanigible due to the number of calculations needed and run. Removing the computation to VBA at the Database reduced the Excel size from 76MB to 12MB.
 
+I have now added the ability to insert the data tables primary values from the final table. This was a manual dril before and was a pain with multiple tables and when setting up for a new ship. I also added the ability for the table list to append columns to the data tables insted of doing it manualy. On the same line the columns can be droped when setting up a new DB.
+
 Below is the manual clean up that is needed before importing the Excel into Access. The Concat formulas are put into the last two or three columns. It was easier to pre populate these values in excel instead of adding more complexity in Access or the VBA.
 
 1) Column header cleanup
