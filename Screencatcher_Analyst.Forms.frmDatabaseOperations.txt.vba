@@ -29,6 +29,60 @@ End If
 End Sub
 
 
+Private Sub cmdClearDataTables_Click()
+'This is to empty the data tables
+Dim continueTime As Boolean
+Dim thisProcedure As String
+
+thisProcedure = "cmdClearDataTables_Click"
+continueTime = startTime(thisProcedure)
+
+'Call the SetListAndVars Module
+AddingToMyDateLists 'Run the list builder
+
+'Call the AlterTablesAndColumns Module _
+and run through the Sub
+ClearDataTables
+
+If continueTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf continueTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
+
+End Sub
+
+
+Private Sub cmdClearDateReportTables_Click()
+'This is to empty the dated report tables
+Dim continueTime As Boolean
+Dim thisProcedure As String
+
+thisProcedure = "cmdClearDateReportTables_Click"
+continueTime = startTime(thisProcedure)
+
+'Call the SetListAndVars Module
+AddingToMyDateLists 'Run the list builder
+
+'Call the AlterTablesAndColumns Module _
+and run through the Sub
+ClearDateReportTables
+
+If continueTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf continueTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
+
+End Sub
+
+
 Private Sub cmdDropDateColumns_Click()
 'Drop the date columns in the data tables
 Dim continueTime As Boolean
