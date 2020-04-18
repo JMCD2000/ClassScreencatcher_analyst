@@ -412,7 +412,7 @@ dataTablesList.Add "Combined_Screenings" ' dataTablesList(0)
 dataTablesList.Add "Combined_Screenings_SparseMatrix" ' dataTablesList(1)
 dataTablesList.Add "Screenings_Only" ' dataTablesList(2)
 dataTablesList.Add "Screenings_Only_SparseMatrix" ' dataTablesList(3)
-'dataTablesList.Add "TC_Screen_Agg" ' This is commented out because it doesn't contain date columns
+dataTablesList.Add "TC_Screen_Agg" ' This is commented out because it doesn't contain date columns
 dataTablesList.Add "XX_Screen_Only" ' dataTablesList(4)
 dataTablesList.Add "XX_Screen_Only_SparseMatrix" ' dataTablesList(5)
 
