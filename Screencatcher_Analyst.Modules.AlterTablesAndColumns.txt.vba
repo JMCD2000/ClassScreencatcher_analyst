@@ -13,18 +13,23 @@ Dim myTableVarList As Variant  ' Used to cycle through each date column as an it
 'AddingToMyDateLists
 
 For Each myTableVarList In dataTablesList
-    For Each myDateVarList In allColumnsList
+    If myTableVarList = "TC_Screen_Agg" Then
+        'This is commented out because it doesn't contain date columns
+        'Pass 'Next myTableVarList
+    Else
+        For Each myDateVarList In allColumnsList
+            
+            myInsertTableSQL = "ALTER TABLE " & myTableVarList & " ADD COLUMN [" & myDateVarList & "] TEXT(255); "
+            'Debug.Print "myInsertTableSQL Statement: " & myInsertTableSQL & "."
+            
+            CurrentDb.Execute myInsertTableSQL
+            'Debug.Print "Completed adding column Date: " & myDateVarList & "."
+            
+        Next myDateVarList
         
-        myInsertTableSQL = "ALTER TABLE " & myTableVarList & " ADD COLUMN [" & myDateVarList & "] TEXT(255); "
-        'Debug.Print "myInsertTableSQL Statement: " & myInsertTableSQL & "."
-        
-        CurrentDb.Execute myInsertTableSQL
-        'Debug.Print "Completed adding column Date: " & myDateVarList & "."
-        
-    Next myDateVarList
-    
-    myDateVarList = Empty
-    Debug.Print ("Finished Table: " & myTableVarList)
+        myDateVarList = Empty
+        Debug.Print ("Finished Table: " & myTableVarList)
+    End If
     
 Next myTableVarList
 
@@ -48,18 +53,23 @@ Dim myTableVarList As Variant  ' Used to cycle through each date column as an it
 'AddingToMyDateLists
 
 For Each myTableVarList In dataTablesList
-    For Each myDateVarList In allColumnsList
+    If myTableVarList = "TC_Screen_Agg" Then
+        'This is commented out because it doesn't contain date columns
+        'Pass 'Next myTableVarList
+    Else
+        For Each myDateVarList In allColumnsList
+            
+            myInsertTableSQL = "ALTER TABLE " & myTableVarList & " DROP Column [" & myDateVarList & "]; "
+            'Debug.Print "myInsertTableSQL Statement: " & myInsertTableSQL & "."
+            
+            CurrentDb.Execute myInsertTableSQL
+            'Debug.Print "Completed removing column Date: " & myDateVarList & "."
+            
+        Next myDateVarList
         
-        myInsertTableSQL = "ALTER TABLE " & myTableVarList & " DROP Column [" & myDateVarList & "]; "
-        'Debug.Print "myInsertTableSQL Statement: " & myInsertTableSQL & "."
-        
-        CurrentDb.Execute myInsertTableSQL
-        'Debug.Print "Completed removing column Date: " & myDateVarList & "."
-        
-    Next myDateVarList
-    
-    myDateVarList = Empty
-    Debug.Print ("Finished Table: " & myTableVarList)
+        myDateVarList = Empty
+        Debug.Print ("Finished Table: " & myTableVarList)
+    End If
     
 Next myTableVarList
 
@@ -103,4 +113,63 @@ myTableVarList = Empty
 
 ' Debug.Print vbCrLf & "Completed the Non Trial Screenings Update Query." & vbCrLf
 
+End Sub
+
+Public Sub ClearDataTables()
+'This empties, deletes records from the data tables.
+'allColumnsList
+'dataTablesList
+Dim myRemoveRecordSQL As String
+Dim myTableVarList As Variant  ' Used to cycle through each date column as an iterable dataTablesList()
+
+'Run the list builder
+'AddingToMyDateLists
+
+For Each myTableVarList In dataTablesList
+            
+    myRemoveRecordSQL = "DELETE * FROM [" & myTableVarList & "];"
+    'Debug.Print "myRemoveRecordSQL Statement: " & myRemoveRecordSQL & "."
+        
+    CurrentDb.Execute myRemoveRecordSQL
+    'Debug.Print "Completed removing column Date: " & myDateVarList & "."
+          
+    'Debug.Print ("Finished Table: " & myTableVarList)
+    
+Next myTableVarList
+
+myTableVarList = Empty
+
+'ClearMyDateLists 'Empty created list objects
+
+' Debug.Print vbCrLf & "Completed the Non Trial Screenings Update Query." & vbCrLf
+End Sub
+
+
+Public Sub ClearDateReportTables()
+'This empties, deletes records from the data tables.
+'allColumnsList
+'dataTablesList
+Dim myRemoveRecordSQL As String
+Dim myTableVarList As Variant  ' Used to cycle through each date column as an iterable dataTablesList()
+
+'Run the list builder
+'AddingToMyDateLists
+
+For Each myTableVarList In allTablesList
+            
+    myRemoveRecordSQL = "DELETE * FROM [" & myTableVarList & "];"
+    'Debug.Print "myRemoveRecordSQL Statement: " & myRemoveRecordSQL & "."
+        
+    CurrentDb.Execute myRemoveRecordSQL
+    'Debug.Print "Completed removing column Date: " & myDateVarList & "."
+          
+    'Debug.Print ("Finished Table: " & myTableVarList)
+    
+Next myTableVarList
+
+myTableVarList = Empty
+
+'ClearMyDateLists 'Empty created list objects
+
+' Debug.Print vbCrLf & "Completed the Non Trial Screenings Update Query." & vbCrLf
 End Sub
