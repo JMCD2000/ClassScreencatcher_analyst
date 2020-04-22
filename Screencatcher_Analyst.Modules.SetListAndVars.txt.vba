@@ -3,6 +3,7 @@ Option Explicit
 
 Public nonTrialsList As Object ' https://excelmacromastery.com/vba-arraylist/
 Public trialsOnlyList As Object 'Declare the Object handle for use
+Public tablesTrialsOnlyList As Object 'Declare the Object handle for use
 Public allColumnsList As Object 'Declare the Object handle for use
 Public allTablesList As Object 'Declare the Object handle for use
 Public PreAT_DatesVarList As Object 'Declare the Object handle for use
@@ -19,7 +20,9 @@ Public columnOWLD As String ' name reference to the OWLD column used in the SQL 
 Public columnFinal As String ' name reference to the Final column used in the SQL statments
 Public curHullNum As String ' This is the current ship hull number that is used in the table names
 Public CurrentTable As String ' This is the current table that the module is modifing
-Public dataTablesList As Object ' Declare the Object handle for use. These are the Aggreation data tables
+Public All_dataTablesList As Object ' Declare the Object handle for use. These are the Aggreation data tables
+Public Events_dataTablesList As Object ' Declare the Object handle for use. These are the Aggreation data tables
+Public All_or_Events As String ' This is a selector that switches column date lists in SQL table calls
 Public SparseRefTable As String ' This is the table that the module is using to compare records columns values
 
 
@@ -222,6 +225,17 @@ trialsOnlyList.Add "2017/07/22" ' FCT
 trialsOnlyList.Add "2018/05/04" ' OWLD
 trialsOnlyList.Add "2020/04/03" ' Final
 
+'Dim tablesTrialsOnlyList As Object
+'Dim tablesTrialsOnlyList As New ArrayList
+Set tablesTrialsOnlyList = CreateObject("System.Collections.ArrayList")
+'tablesTrialsOnlyList
+' Add items
+tablesTrialsOnlyList.Add "2016/03/06_LPD26_BT" ' BT
+tablesTrialsOnlyList.Add "2016/04/15_LPD26_AT" ' AT
+tablesTrialsOnlyList.Add "2017/07/22_LPD26_FCT" ' FCT
+tablesTrialsOnlyList.Add "2018/05/04_LPD26_OWLD" ' OWLD
+tablesTrialsOnlyList.Add "2020/04/03_LPD26_Final" ' Final
+
 'Dim allColumnsList As Object
 'Dim allColumnsList As New ArrayList
 Set allColumnsList = CreateObject("System.Collections.ArrayList")
@@ -403,19 +417,31 @@ allTablesList.Add "2020/01/22_LPD26"
 allTablesList.Add "2020/04/03_LPD26_Final"
 
 
-'Dim dataTablesList As Object
-'Dim dataTablesList As New ArrayList
-Set dataTablesList = CreateObject("System.Collections.ArrayList")
-'dataTablesList
+'Dim All_dataTablesList As Object
+'Dim All_dataTablesList As New ArrayList
+Set All_dataTablesList = CreateObject("System.Collections.ArrayList")
+'All_dataTablesList
 ' Add items
-dataTablesList.Add "Combined_Screenings" ' dataTablesList(0)
-dataTablesList.Add "Combined_Screenings_SparseMatrix" ' dataTablesList(1)
-dataTablesList.Add "Screenings_Only" ' dataTablesList(2)
-dataTablesList.Add "Screenings_Only_SparseMatrix" ' dataTablesList(3)
-dataTablesList.Add "TC_Screen_Agg" ' This is commented out because it doesn't contain date columns
-dataTablesList.Add "XX_Screen_Only" ' dataTablesList(4)
-dataTablesList.Add "XX_Screen_Only_SparseMatrix" ' dataTablesList(5)
+All_dataTablesList.Add "All_Combined_Screenings" ' dataTablesList(0)
+All_dataTablesList.Add "All_Combined_Screenings_SparseMatrix" ' dataTablesList(1)
+All_dataTablesList.Add "All_Screenings_Only" ' dataTablesList(2)
+All_dataTablesList.Add "All_Screenings_Only_SparseMatrix" ' dataTablesList(3)
+All_dataTablesList.Add "All_TC_Screen_Agg" ' dataTablesList(4)
+All_dataTablesList.Add "All_XX_Screen_Only" ' dataTablesList(5)
+All_dataTablesList.Add "All_XX_Screen_Only_SparseMatrix" ' dataTablesList(6)
 
+'Dim Events_dataTablesList As Object
+'Dim Events_dataTablesList As New ArrayList
+Set Events_dataTablesList = CreateObject("System.Collections.ArrayList")
+'Events_dataTablesList
+' Add items
+Events_dataTablesList.Add "Events_Combined_Screenings" ' dataTablesList(0)
+Events_dataTablesList.Add "Events_Combined_Screenings_SparseMatrix" ' dataTablesList(1)
+Events_dataTablesList.Add "Events_Screenings_Only" ' dataTablesList(2)
+Events_dataTablesList.Add "Events_Screenings_Only_SparseMatrix" ' dataTablesList(3)
+Events_dataTablesList.Add "Events_TC_Screen_Agg" ' dataTablesList(4)
+Events_dataTablesList.Add "Events_XX_Screen_Only" ' dataTablesList(5)
+Events_dataTablesList.Add "Events_XX_Screen_Only_SparseMatrix" ' dataTablesList(6)
 
 ' Insert to first position
 '   allTablesList.Insert 0, "2020/01/22_LPD23"
@@ -442,8 +468,10 @@ PreAT_DatesVarList.Clear
 PreFCT_DatesVarList.Clear
 nonTrialsList.Clear
 trialsOnlyList.Clear
+tablesTrialsOnlyList.Clear
 allColumnsList.Clear
 allTablesList.Clear
-dataTablesList.Clear
+All_dataTablesList.Clear
+Events_dataTablesList.Clear
 
 End Sub
