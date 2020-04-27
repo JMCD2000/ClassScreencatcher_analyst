@@ -196,6 +196,22 @@ Dim myTableVarList As Variant  ' Used to cycle through each date column as an it
     ' Debug.Print vbCrLf & "Completed the Non Trial Screenings Update Query." & vbCrLf
 End Sub
 
+
+Public Sub CreateDateReportTables()
+'This creates tables from the weekly reports date data in allTablesList.
+'dataTablesList
+Dim myTableVarList As Variant  ' Used to cycle through each date column as an iterable dataTablesList()
+
+    For Each myTableVarList In allTablesList
+        MakeNewReportsTables myTableVarList
+        Debug.Print ("Finished Table: " & myTableVarList)
+    Next myTableVarList
+    
+    myTableVarList = Empty
+    
+End Sub
+
+
 Public Sub MakeNewReportsTables(myNewTable As String)
 
 Dim db As DAO.Database
