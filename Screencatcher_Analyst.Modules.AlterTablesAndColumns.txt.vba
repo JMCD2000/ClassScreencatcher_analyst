@@ -195,3 +195,128 @@ Dim myTableVarList As Variant  ' Used to cycle through each date column as an it
     
     ' Debug.Print vbCrLf & "Completed the Non Trial Screenings Update Query." & vbCrLf
 End Sub
+
+Public Sub MakeNewReportsTables(myNewTable As String)
+
+Dim db As DAO.Database
+Dim tdf As DAO.TableDef
+Dim fld_TC As DAO.Field ' Trial_Card CHAR
+Dim fld_Star As DAO.Field ' Star CHAR
+Dim fld_Pri As DAO.Field ' Priority CHAR
+Dim fld_Safety As DAO.Field ' Safety CHAR
+Dim fld_Screening As DAO.Field ' Screening CHAR
+Dim fld_Act_1 As DAO.Field ' Act_1 CHAR
+Dim fld_Act_2 As DAO.Field ' Act_2 CHAR
+Dim fld_Status As DAO.Field ' Status CHAR
+Dim fld_Action_Taken As DAO.Field ' Action_Taken CHAR
+Dim fld_Date_Discovered As DAO.Field ' Date_Discovered DATE
+Dim fld_Date_Closed As DAO.Field ' Date_Closed DATE
+Dim fld_Trial_ID As DAO.Field ' Trial_ID CHAR
+Dim fld_Event As DAO.Field ' Event CHAR
+Dim fld_TC_Screening As DAO.Field ' TC_Screening CHAR
+Dim fld_TC_Screening_AC1_AC2 As DAO.Field ' TC_Screening_AC1_AC2 CHAR
+'Dim fld_Final_Sts_A_T As DAO.Field ' TC_Screening_AC1_AC2 CHAR
+
+'Open connection to the current database
+Set db = CurrentDb
+
+'Create the new table object
+Set tdf = db.CreateTableDef(myNewTable)
+
+'Create the new field objects
+Set fld_TC = tdf.CreateField("Trial_Card", dbText, 250)
+Set fld_Star = tdf.CreateField("Star", dbText, 250)
+Set fld_Pri = tdf.CreateField("Pri", dbText, 250)
+Set fld_Safety = tdf.CreateField("Safety", dbText, 250)
+Set fld_Screening = tdf.CreateField("Screening", dbText, 250)
+Set fld_Act_1 = tdf.CreateField("Act_1", dbText, 250)
+Set fld_Act_2 = tdf.CreateField("Act_2", dbText, 250)
+Set fld_Status = tdf.CreateField("Status", dbText, 250)
+Set fld_Action_Taken = tdf.CreateField("Action_Taken", dbText, 250)
+Set fld_Date_Discovered = tdf.CreateField("Date_Discovered", dbDate, 250)
+Set fld_Date_Closed = tdf.CreateField("Date_Closed", dbDate, 250)
+Set fld_Trial_ID = tdf.CreateField("Trial_ID", dbText, 250)
+Set fld_Event = tdf.CreateField("Event", dbText, 250)
+Set fld_TC_Screening = tdf.CreateField("TC_Screening", dbText, 250)
+Set fld_TC_Screening_AC1_AC2 = tdf.CreateField("TC_Screening_AC1_AC2", dbText, 250)
+'Set fld_Final_Sts_A_T = tdf.CreateField("Final_Sts_A_T", dbText, 250)
+
+tdf.Fields.Append fld_TC
+tdf.Fields.Append fld_Star
+tdf.Fields.Append fld_Pri
+tdf.Fields.Append fld_Safety
+tdf.Fields.Append fld_Screening
+tdf.Fields.Append fld_Act_1
+tdf.Fields.Append fld_Act_2
+tdf.Fields.Append fld_Action_Taken
+tdf.Fields.Append fld_Date_Discovered
+tdf.Fields.Append fld_Date_Closed
+tdf.Fields.Append fld_Trial_ID
+tdf.Fields.Append fld_Event
+tdf.Fields.Append fld_TC_Screening
+tdf.Fields.Append fld_TC_Screening_AC1_AC2
+'tdf.Fields.Append fld_Final_Sts_A_T
+
+'Add the table to the current database
+db.TableDefs.Append tdf
+
+'Refresh current database
+db.TableDefs.Refresh
+Application.RefreshDatabaseWindow
+
+'Empty the objects
+Set fld_TC = Nothing
+Set fld_Star = Nothing
+Set fld_Pri = Nothing
+Set fld_Safety = Nothing
+Set fld_Screening = Nothing
+Set fld_Act_1 = Nothing
+Set fld_Act_2 = Nothing
+Set fld_Status = Nothing
+Set fld_Action_Taken = Nothing
+Set fld_Date_Discovered = Nothing
+Set fld_Date_Closed = Nothing
+Set fld_Trial_ID = Nothing
+Set fld_Event = Nothing
+Set fld_TC_Screening = Nothing
+Set fld_TC_Screening_AC1_AC2 = Nothing
+'Set fld_Final_Sts_A_T = Nothing
+Set tdf = Nothing
+Set db = Nothing
+
+MakeNewReportsTablesIndex myNewTable
+
+End Sub
+
+
+Public Sub MakeNewReportsTablesIndex(myNewTable As String)
+
+Dim db As DAO.Database
+Dim tdf As DAO.TableDef
+Dim fld_Index As DAO.Index
+Dim fld_TC As DAO.Field ' Trial_Card CHAR
+
+Set db = CurrentDb
+Set tdf = db.TableDefs(myNewTable)
+
+'Create Index property
+Set fld_Index = tdf.CreateIndex("PrimaryKey")
+fld_Index.Primary = True
+fld_Index.Required = True
+fld_Index.Unique = True
+
+'Create the new field objects
+Set fld_TC = fld_Index.CreateField("Trial_Card", dbText, 250)
+
+'Append the fields to the table
+fld_Index.Fields.Append fld_TC
+tdf.Indexes.Append fld_Index
+
+tdf.Indexes.Refresh
+
+'Set fld_Index = Empty
+'Set fld_TC = Empty
+'Set tdf = Empty
+Set db = Nothing
+
+End Sub
