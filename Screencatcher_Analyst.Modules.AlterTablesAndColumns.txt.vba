@@ -212,7 +212,7 @@ Dim myTableVarList As Variant  ' Used to cycle through each date column as an it
 End Sub
 
 
-Public Sub MakeNewReportsTables(myNewTable As String)
+Public Sub MakeNewReportsTables(ByVal myNewTable As String)
 
 Dim db As DAO.Database
 Dim tdf As DAO.TableDef
