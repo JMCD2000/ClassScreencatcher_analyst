@@ -1,0 +1,31 @@
+Table_Source	Event_Filtered	Trial_IDs	Date_Column_Summary
+CS_SM_DeltaRescreen_ALL	BT/AT/FCT/Special	BCF	Sum of changes by current Date column and Event Filtered.
+CS_SM_DeltaRescreen_AT_New	AT-New	C	Sum of changes by current Date column and Event Filtered.
+CS_SM_DeltaRescreen_AT_Roll	AT-Roll	BC	Sum of changes by current Date column and Event Filtered.
+CS_SM_DeltaRescreen_BT_New	BT	B	Sum of changes by current Date column and Event Filtered.
+CS_SM_DeltaRescreen_BT_Roll	BT	B	Sum of changes by current Date column and Event Filtered.
+CS_SM_DeltaRescreen_FCT_New	FCT-New	F	Sum of changes by current Date column and Event Filtered.
+CS_SM_DeltaRescreen_FCT_Roll	FCT-Roll	BCF	Sum of changes by current Date column and Event Filtered.
+CS_SM_DeltaRescreen_INSURV	AT/FCT/Special	CF	Sum of changes by current Date column and Event Filtered.
+Date_Diff_from_Prior	None	ALL	Difference between current date column and prior date column.
+DaysPost_ALL	BT/AT/FCT/Special	ALL	Difference between BT Event Date and current Date column.
+DaysPost_AT	AT	All	Difference between AT Event Date and current Date column.
+DaysPost_BT	BT	All	Difference between BT Event Date and current Date column.
+DaysPost_FCT	FCT	All	Difference between FCT Event Date and current Date column.
+DaysPost_INSURV	AT/FCT/Special	All	Difference between AT Event Date and current Date column.
+SO_SM_DeltaRescreen_ALL	BT/AT/FCT/Special	BCF	Sum of changes by current Date column and Event Filtered.
+SO_SM_DeltaRescreen_AT_New	AT-New	C	Sum of changes by current Date column and Event Filtered.
+SO_SM_DeltaRescreen_AT_Roll	AT-Roll	BC	Sum of changes by current Date column and Event Filtered.
+SO_SM_DeltaRescreen_BT_New	BT	B	Sum of changes by current Date column and Event Filtered.
+SO_SM_DeltaRescreen_BT_Roll	BT	B	Sum of changes by current Date column and Event Filtered.
+SO_SM_DeltaRescreen_FCT_New	FCT-New	F	Sum of changes by current Date column and Event Filtered.
+SO_SM_DeltaRescreen_FCT_Roll	FCT-Roll	BCF	Sum of changes by current Date column and Event Filtered.
+SO_SM_DeltaRescreen_INSURV	AT/FCT/Special	CF	Sum of changes by current Date column and Event Filtered.
+XXSO_SM_DeltaRescreen_ALL	BT/AT/FCT/Special	BCF	Sum of changes by current Date column and Event Filtered.
+XXSO_SM_DeltaRescreen_AT_New	AT-New	C	Sum of changes by current Date column and Event Filtered.
+XXSO_SM_DeltaRescreen_AT_Roll	AT-Roll	BC	Sum of changes by current Date column and Event Filtered.
+XXSO_SM_DeltaRescreen_BT_New	BT	B	Sum of changes by current Date column and Event Filtered.
+XXSO_SM_DeltaRescreen_BT_Roll	BT	B	Sum of changes by current Date column and Event Filtered.
+XXSO_SM_DeltaRescreen_FCT_New	FCT-New	F	Sum of changes by current Date column and Event Filtered.
+XXSO_SM_DeltaRescreen_FCT_Roll	FCT-Roll	BCF	Sum of changes by current Date column and Event Filtered.
+XXSO_SM_DeltaRescreen_INSURV	AT/FCT/Special	CF	Sum of changes by current Date column and Event Filtered.
