@@ -83,6 +83,32 @@ End If
 End Sub
 
 
+Private Sub cmdCreateDataTables_Click()
+'Create the report data tables from the list
+Dim continueTime As Boolean
+Dim thisProcedure As String
+
+thisProcedure = "cmdCreateDataTables_Click"
+continueTime = startTime(thisProcedure)
+
+'Call the SetListAndVars Module
+AddingToMyDateLists 'Run the list builder
+
+'Call the AlterTablesAndColumns Module _
+and run through the Sub
+CreateDateReportTables
+
+If continueTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf continueTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
+
+End Sub
+
 Private Sub cmdDropDateColumns_Click()
 'Drop the date columns in the data tables
 Dim continueTime As Boolean
@@ -163,6 +189,67 @@ cmdSetXXSparseScreenMatrix_Click
 End Sub
 
 
+Private Sub cmdSet_Column_Summations_Click()
+'This sets the counts by column
+Dim continueTime As Boolean
+Dim thisProcedure As String
+
+thisProcedure = "cmdSet_Column_Summations_Click"
+continueTime = startTime(thisProcedure)
+
+'Call the SetListAndVars Module
+AddingToMyDateLists 'Run the list builder
+
+'Call the SetCountsByDateColumn_and_Event Module _
+and run through the Sub
+SetAllSummaryCounts
+GetDateDif
+
+'Empty the lists and varibles used
+ClearMyDateLists 'Empty the lists that were used
+
+If continueTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf continueTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
+
+End Sub
+
+
+Private Sub cmdSet_Row_Summations_Click()
+'This sets the counts by row
+Dim continueTime As Boolean
+Dim thisProcedure As String
+
+thisProcedure = "cmdSet_Column_Summations_Click"
+continueTime = startTime(thisProcedure)
+
+'Call the SetListAndVars Module
+AddingToMyDateLists 'Run the list builder
+
+'Call the SetReScreenCounts Module _
+and run through the Sub
+SetAllReScreenCounts
+SetEventReScreenCounts
+
+'Empty the lists and varibles used
+ClearMyDateLists 'Empty the lists that were used
+
+If continueTime = True Then
+    'stop time
+    endTime (thisProcedure)
+ElseIf continueTime = False Then
+    'time error, do nothing
+Else
+    'untraped error
+End If
+
+End Sub
+
 Private Sub cmdSet_TABLE_Combined_Screenings_Click()
 'This is to load or reload the screenings into the Combined_Screenings Table
 Dim continueTime As Boolean
@@ -225,7 +312,7 @@ AddingToMyDateLists 'Run the list builder
 
 'Call the SetScreeningsOnly Module and run through all of the Subs
 'SetCurrentWorkingTable_SO 'Run the Current Working Table sub
-CurrentTable = "All_Combined_Screenings"
+CurrentTable = "All_Screenings_Only"
 All_or_Events = "All"
 SetFirstScreensAndEvents_SO 'This is to load or reload the screenings into the Combined_Screenings Table
 SetNonShipEventScrns_SO 'This loads the screens that are not actual trials
@@ -237,7 +324,7 @@ CurrentTable = Empty
 All_or_Events = Empty
 
 'SetCurrentWorkingTable_SO 'Run the Current Working Table sub
-CurrentTable = "Events_Combined_Screenings"
+CurrentTable = "Events_Screenings_Only"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_SO 'This is to load or reload the screenings into the Combined_Screenings Table
 SetLateAdds_TrialCards_SO 'This changes the screening from <Not Found> to <POST Trial>
