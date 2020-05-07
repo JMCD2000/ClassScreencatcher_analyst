@@ -1,5 +1,5 @@
 # ClassScreencatcher_analyst
-This takes weekly reports and builds combined tables and metrics in Access and Excel with VBA
+This takes weekly reports and builds combined tables and metrics in Access and Excel with VBA, when loaded manually. For automated loading of the weekly reports tables, I use the ScreeningHistory project to select the folder containing the excel files and then nselect this ClassScreecatcher_analyst project. The ScreeningHistory does all the transformation and loading via VBA.
 
 I would have loved to have done this project in Python, but my work doesn't allow it. This runs using VBA written in Modules in MS Access 2016. The more tables there are the slower this runs. This is just an issue with using VBA and 32bit office. Again, it is what my work allows and has configured.
 
@@ -7,9 +7,9 @@ I run weekly exports from a database that exports to excel to provide a status o
 
 Alot of this code was originaly started in Excel, but became unmanigible due to the number of calculations needed and run. Removing the computation to VBA at the Database reduced the Excel size from 76MB to 12MB.
 
-I have now added the ability to insert the data tables primary values from the final table. This was a manual dril before and was a pain with multiple tables and when setting up for a new ship. I also added the ability for the table list to append columns to the data tables insted of doing it manualy. On the same line the columns can be droped when setting up a new DB.
+I have now added the ability to insert the data tables primary values from the final table. This was a manual drill before and was a pain with multiple tables and when setting up for a new ship. I also added the ability for the table list to append columns to the data tables insted of doing it manualy. On the same line the columns can be droped when setting up a new DB.
 
-Below is the manual clean up that is needed before importing the Excel into Access. The Concat formulas are put into the last two or three columns. It was easier to pre populate these values in excel instead of adding more complexity in Access or the VBA.
+Below is the manual clean up that is needed before direct importing the Excel into Access. The Concat formulas are put into the last two or three columns. It was easier to pre populate these values in excel instead of adding more complexity in Access or the VBA.
 
 1) Column header cleanup
 (used on the Final only)
