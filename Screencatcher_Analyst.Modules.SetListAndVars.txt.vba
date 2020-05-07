@@ -457,6 +457,8 @@ tablesTrialsOnlyList.Clear
 allColumnsList.Clear
 allTablesList.Clear
 All_dataTablesList.Clear
+All_SparseMatrixList.Clear
 Events_dataTablesList.Clear
+Events_SparseMatrixList.Clear
 
 End Sub
