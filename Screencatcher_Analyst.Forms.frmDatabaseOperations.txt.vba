@@ -199,14 +199,18 @@ continueTime = startTime(thisProcedure)
 
 'Call the SetListAndVars Module
 AddingToMyDateLists 'Run the list builder
+'Call the SetListAndVars_Summary Module
+AddingToMySummaryDateLists 'Run the list builder
 
-'Call the SetCountsByDateColumn_and_Event Module _
+'Call the SetCountsSummaryByColumn Module _
 and run through the Sub
-SetAllSummaryCounts
-GetDateDif
+Set_All_SparseMatrix_SummaryCounts
+SetRunningDays
+SetDateDifferences
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
+ClearMySummaryDateLists 'Empty the lists that were used
 
 If continueTime = True Then
     'stop time
@@ -230,14 +234,16 @@ continueTime = startTime(thisProcedure)
 
 'Call the SetListAndVars Module
 AddingToMyDateLists 'Run the list builder
+'Call the SetListAndVars_Summary Module
+AddingToMySummaryDateLists 'Run the list builder
 
-'Call the SetReScreenCounts Module _
+'Call the SetCountsSummaryByRow Module _
 and run through the Sub
-SetAllReScreenCounts
-SetEventReScreenCounts
+SetRecordReScreenCounts
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
+ClearMySummaryDateLists 'Empty the lists that were used
 
 If continueTime = True Then
     'stop time
