@@ -79,6 +79,24 @@ EventFilterList.Add "(((Event = 'AT') OR (Event = 'FCT')) AND ((Trial_ID LIKE '*
 End Sub
 
 
+Public Function IndexInArray(myArray As Variant, mySearch As Variant) As Variant
+' This Function loops an passed in array to find and _
+return the index of the item in the array
+Dim i As Long
+Dim upper As Long
+upper = myArray.Count
+
+For i = 0 To myArray.Count
+    If myArray(i) = mySearch Then
+        IndexInArray = i
+        Exit Function
+    End If
+Next i
+'mySearch var was not found in the array, return null
+IndexInArray = Null
+End Function
+
+
 Public Sub ClearMySummaryDateLists()
 'This is to empty the lists and make sure no double entry happens
 
