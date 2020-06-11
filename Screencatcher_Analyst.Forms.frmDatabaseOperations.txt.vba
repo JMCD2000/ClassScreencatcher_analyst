@@ -239,7 +239,7 @@ AddingToMySummaryDateLists 'Run the list builder
 
 'Call the SetCountsSummaryByRow Module _
 and run through the Sub
-SetRecordReScreenCounts
+'SetRecordReScreenCounts
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
@@ -276,7 +276,9 @@ SetNonShipEventScrns_CS 'This loads the screens that are not actual trials
 SetLateAdds_TrialCards_CS 'This changes the screening from <Not Found> to <POST Trial>
 SetClosedXX_TrialCards_CS 'This changes the screening from <Not Found> to <X/X>
 SetTrialCardSplits_CS 'This changes the screening from <Not Found> to <SPLIT>
-
+SetTrialCardsMissingFromReports_CS allColumnsList_BT, allColumnsList_AT
+SetTrialCardsMissingFromReports_CS allColumnsList_AT, allColumnsList_FCT
+SetTrialCardsMissingFromReports_CS allColumnsList_FCT, allColumnsList_OWLD
 CurrentTable = Empty
 All_or_Events = Empty
 
@@ -325,7 +327,9 @@ SetNonShipEventScrns_SO 'This loads the screens that are not actual trials
 SetLateAdds_TrialCards_SO 'This changes the screening from <Not Found> to <POST Trial>
 SetClosedXX_TrialCards_SO 'This changes the screening from <Not Found> to <X/X>
 SetTrialCardSplits_SO 'This changes the screening from <Not Found> to <SPLIT>
-
+SetTrialCardsMissingFromReports_CS allColumnsList_BT, allColumnsList_AT
+SetTrialCardsMissingFromReports_CS allColumnsList_AT, allColumnsList_FCT
+SetTrialCardsMissingFromReports_CS allColumnsList_FCT, allColumnsList_OWLD
 CurrentTable = Empty
 All_or_Events = Empty
 
@@ -374,7 +378,9 @@ SetNonShipEventScrns_XXSO 'This loads the screens that are not actual trials
 SetLateAdds_TrialCards_XXSO 'This changes the screening from <Not Found> to <POST Trial>
 SetClosedXX_TrialCards_XXSO 'This changes the screening from <Not Found> to <X/X>
 SetTrialCardSplits_XXSO 'This changes the screening from <Not Found> to <SPLIT>
-
+SetTrialCardsMissingFromReports_CS allColumnsList_BT, allColumnsList_AT
+SetTrialCardsMissingFromReports_CS allColumnsList_AT, allColumnsList_FCT
+SetTrialCardsMissingFromReports_CS allColumnsList_FCT, allColumnsList_OWLD
 CurrentTable = Empty
 All_or_Events = Empty
 
