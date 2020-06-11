@@ -411,3 +411,267 @@ Dim myDateVarList As Variant
     ' Debug.Print vbCrLf & "The Split Trial Cards Update Query completed." & vbCrLf
 
 End Sub
+
+
+Public Sub SetTrialCardsMissingFromReports_CS(startEvent As Long, endEvent As Long)
+'This changes the screening from <Not Found> to the prior value _
+where the trial card was missing from a report source.
+Dim rsWriteData As DAO.Recordset 'This is the table recordset
+Dim i As Long ' Used as the allColumnsList(i) itterable
+'Dim myTableName As String
+'Dim startEvent As Long
+'Dim endEvent As Long
+Dim myTC_Number As String
+Dim mySparseVar As String
+Dim DateColumnVal As String 'Current Column header date value string, CurrrentColumn(0)
+Dim PriorDateColumnVal As String 'Prior Column header date value string, CurrrentColumn(-1)
+Dim Neg2DateColumnVal As String 'Neg 2 Column header date value string, CurrrentColumn(-2)
+Dim Neg3DateColumnVal As String 'Neg 3 Column header date value string, CurrrentColumn(-3)
+Dim CurState As String ' This is the current screening being evaluated
+Dim PriorState As String ' CurState minus 1
+Dim Neg2State As String ' CurState minus 2
+Dim Neg3State As String ' CurState minus 3
+
+'Call the SetListAndVars Module
+'AddingToMyDateLists 'Run the list builder
+'Call the SetListAndVars_Summary Module
+'AddingToMySummaryDateLists 'Run the list builder
+
+'myTableName = "All_Combined_Screenings"
+'startEvent = allColumnsList_AT
+'endEvent = allColumnsList_FCT
+
+'CurrentDb.OpenRecordset(Name:="All_Z_Summary", Type:=dbOpenDynaset, Options:=dbInconsistent, LockEdit:=dbOptimistic)
+Set rsWriteData = CurrentDb.OpenRecordset(CurrentTable, dbOpenDynaset, dbInconsistent, dbOptimistic)
+'Move cursor to first row, this will be used to itterate through all the rows in order
+rsWriteData.MoveFirst
+'myTC_Number = rsWriteData.Fields(Trial_Card)
+'Debug.Print ("myTC_Number: " & myTC_Number)
+
+    While (Not rsWriteData.EOF)
+        myTC_Number = rsWriteData.Fields("Trial_Card")
+        Debug.Print ("myTC_Number: " & myTC_Number)
+
+       'Run for BT Event to the AT Event, but not the AT Event
+       'Run for AT Event to the FCT Event, but not the FCT Event
+       'Run for FCT Event to the OWLD Event, but not the OWLD Event
+        For i = startEvent To (endEvent - 1)
+            'Debug.Print "i = " & i
+            DateColumnVal = allColumnsList(i)
+            'Debug.Print "DateColumnVal = " & DateColumnVal
+            
+            If i = startEvent Then
+                'This is the first date column in the current range
+                'and it is the Event Column
+                'i = 0
+                CurState = rsWriteData(DateColumnVal)
+                mySparseVar = CurState
+            ElseIf i = (startEvent + 1) Then
+                'This is the second date column in the current range
+                'and it has the Event Column
+                'i = 1
+                PriorDateColumnVal = allColumnsList(i - 1)
+                CurState = rsWriteData(DateColumnVal)
+                PriorState = rsWriteData(PriorDateColumnVal)
+                
+''''Need to add in 'POST BT Trial' and 'POST AT Trial' and 'POST FCT Trial' _
+    the code in SetLateAdds_TrialCards_CS() marks part 01 TC's with post trial because it is a stateless query
+                If CurState = "Not Found" _
+                    Or CurState = "POST BT Trial" _
+                    Or CurState = "POST AT Trial" _
+                    Or CurState = "POST FCT Trial" Then
+                    'TC Value is missing in current report
+                    'Need to test for missing TC's from report to report
+                    If PriorState = "Not Found" _
+                        Or PriorState = "POST BT Trial" _
+                        Or PriorState = "POST AT Trial" _
+                        Or PriorState = "POST FCT Trial" Then
+                        'I am only looking back one reporting window
+                        'TC Value is missing two reports in a row
+                        mySparseVar = "Not Found"
+                    ElseIf PriorState <> "Not Found" _
+                        Or PriorState <> "POST BT Trial" _
+                        Or PriorState <> "POST AT Trial" _
+                        Or PriorState <> "POST FCT Trial" Then
+                        'The TC is not missing from the prior report
+                        mySparseVar = PriorState
+                    Else
+                        'Untrapped error
+                        mySparseVar = "991A" ' This is a flag value that something is not correct
+                    End If
+                ElseIf CurState <> "Not Found" _
+                    Or CurState <> "POST BT Trial" _
+                    Or CurState <> "POST AT Trial" _
+                    Or CurState <> "POST FCT Trial" Then
+                    'The TC is not missing from the current report
+                    mySparseVar = CurState
+                Else
+                    'Untrapped error
+                    mySparseVar = "991B" ' This is a flag value that something is not correct
+                End If
+            ElseIf i = (startEvent + 2) Then
+                'This is the third date column in the current range
+                'and it has the Event Column where i = 2
+                'i > 1
+                PriorDateColumnVal = allColumnsList(i - 1)
+                Neg2DateColumnVal = allColumnsList(i - 2)
+                CurState = rsWriteData(DateColumnVal)
+                PriorState = rsWriteData(PriorDateColumnVal)
+                Neg2State = rsWriteData(Neg2DateColumnVal)
+                If CurState = "Not Found" _
+                    Or CurState = "POST BT Trial" _
+                    Or CurState = "POST AT Trial" _
+                    Or CurState = "POST FCT Trial" Then
+                    'TC Value is missing in current report
+                    'Need to test for missing TC's from report to report
+                    If PriorState = "Not Found" _
+                        Or PriorState = "POST BT Trial" _
+                        Or PriorState = "POST AT Trial" _
+                        Or PriorState = "POST FCT Trial" Then
+                        'TC Value is missing two reports in a row
+                        If Neg2State = "Not Found" _
+                            Or Neg2State = "POST BT Trial" _
+                            Or Neg2State = "POST AT Trial" _
+                            Or Neg2State = "POST FCT Trial" Then
+                            'I am only looking back two reporting windows
+                            'TC Value is missing three reports in a row
+                            mySparseVar = "Not Found"
+                        Else
+                            'Untrapped error
+                            mySparseVar = "992A" ' This is a flag value that something is not correct
+                        End If
+                    ElseIf PriorState <> "Not Found" _
+                        Or PriorState <> "POST BT Trial" _
+                        Or PriorState <> "POST AT Trial" _
+                        Or PriorState <> "POST FCT Trial" Then
+                        'The TC is not missing from the prior report
+                        mySparseVar = PriorState
+                    Else
+                        'Untrapped error
+                        mySparseVar = "992B" ' This is a flag value that something is not correct
+                    End If
+                ElseIf CurState <> "Not Found" _
+                    Or CurState <> "POST BT Trial" _
+                    Or CurState <> "POST AT Trial" _
+                    Or CurState <> "POST FCT Trial" Then
+                    'The TC is not missing from the current report
+                    mySparseVar = CurState
+                Else
+                    'Untrapped error
+                    mySparseVar = "992C" ' This is a flag value that something is not correct
+                End If
+            ElseIf i > (startEvent + 2) Then
+                'This is the Fourth date column in the current range
+                'and it has the Event Column where i = 3
+                'i > 2
+                PriorDateColumnVal = allColumnsList(i - 1)
+                Neg2DateColumnVal = allColumnsList(i - 2)
+                Neg3DateColumnVal = allColumnsList(i - 3)
+                CurState = rsWriteData(DateColumnVal)
+                PriorState = rsWriteData(PriorDateColumnVal)
+                Neg2State = rsWriteData(Neg2DateColumnVal)
+                Neg3State = rsWriteData(Neg3DateColumnVal)
+                If CurState = "Not Found" _
+                    Or CurState = "POST BT Trial" _
+                    Or CurState = "POST AT Trial" _
+                    Or CurState = "POST FCT Trial" Then
+                    'TC Value is missing in current report
+                    'Need to test for missing TC's from report to report
+                    If PriorState = "Not Found" _
+                        Or PriorState = "POST BT Trial" _
+                        Or PriorState = "POST AT Trial" _
+                        Or PriorState = "POST FCT Trial" Then
+                        'TC Value is missing two reports in a row
+                        If Neg2State = "Not Found" _
+                            Or Neg2State = "POST BT Trial" _
+                            Or Neg2State = "POST AT Trial" _
+                            Or Neg2State = "POST FCT Trial" Then
+                            'TC Value is missing three reports in a row
+                            If Neg3State = "Not Found" _
+                                Or Neg3State = "POST BT Trial" _
+                                Or Neg3State = "POST AT Trial" _
+                                Or Neg3State = "POST FCT Trial" Then
+                                'TC Value is missing four reports in a row
+                                'I am only looking back three reporting windows
+                                mySparseVar = "Not Found"
+                            ElseIf Neg3State <> "Not Found" _
+                                Or Neg3State <> "POST BT Trial" _
+                                Or Neg3State <> "POST AT Trial" _
+                                Or Neg3State <> "POST FCT Trial" Then
+                                'The TC is not missing from the Neg3State report
+                                mySparseVar = Neg3State
+                            Else
+                                'Untrapped error
+                                mySparseVar = "993A" ' This is a flag value that something is not correct
+                            End If
+                        ElseIf Neg2State <> "Not Found" _
+                            Or Neg2State <> "POST BT Trial" _
+                            Or Neg2State <> "POST AT Trial" _
+                            Or Neg2State <> "POST FCT Trial" Then
+                            'The TC is not missing from the Neg2State report
+                            mySparseVar = Neg2State
+                        Else
+                            'Untrapped error
+                            mySparseVar = "993B" ' This is a flag value that something is not correct
+                        End If
+                    ElseIf PriorState <> "Not Found" _
+                        Or PriorState <> "POST BT Trial" _
+                        Or PriorState <> "POST AT Trial" _
+                        Or PriorState <> "POST FCT Trial" Then
+                        'The TC is not missing from the prior report
+                        mySparseVar = PriorState
+                    Else
+                        'Untrapped error
+                        mySparseVar = "993C" ' This is a flag value that something is not correct
+                    End If
+                ElseIf CurState <> "Not Found" _
+                    Or CurState <> "POST BT Trial" _
+                    Or CurState <> "POST AT Trial" _
+                    Or CurState <> "POST FCT Trial" Then
+                    'The TC is not missing from the current report
+                    mySparseVar = CurState
+                Else
+                    'Untrapped error
+                    mySparseVar = "993D" ' This is a flag value that something is not correct
+                End If
+            Else
+                'Untrapped error
+            End If
+            
+            'Debug.Print "CurState = " & CurState
+            'Debug.Print "mySparseVar = " & mySparseVar
+            
+            If mySparseVar = CurState Then
+                'Do Nothing, the value is already in the table
+            Else
+                'Run the Update SQL
+                'CurrentDb.Execute "UPDATE DISTINCTROW " & myTableName & " " _
+                & "SET " & myTableName & ".[" & DateColumnVal & "] = '" & mySparseVar & "' " _
+                & "WHERE ((" & myTableName & ".[Trial_Card])='" & myTC_Number & "');"
+                
+                rsWriteData.Edit
+                rsWriteData(DateColumnVal) = mySparseVar
+                rsWriteData.Update
+                
+            End If
+            
+            PriorDateColumnVal = Empty
+            Neg2DateColumnVal = Empty
+            Neg3DateColumnVal = Empty
+            mySparseVar = Empty
+            CurState = Empty
+            PriorState = Empty
+            Neg2State = Empty
+            Neg3State = Empty
+            
+         Next i
+         
+         rsWriteData.MoveNext
+    Wend
+    
+rsWriteData.Close
+Set rsWriteData = Nothing
+
+    ' Debug.Print vbCrLf & "The Split Trial Cards Update Query completed." & vbCrLf
+
+End Sub
