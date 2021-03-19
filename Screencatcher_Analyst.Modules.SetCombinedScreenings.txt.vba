@@ -1,14 +1,7 @@
 Option Compare Database
+'The use of SPLIT until the actual split occures causes counting issues because the screening changes from SPLIT to the actual screening
+'The use of NotFound until the trial card is actually written at Event just looks messy, would like to change this
 Option Explicit
-
-
-Public Sub SetCurrentWorkingTable_CS()
-'This sub is setting the current working _
-table that is used in all the SQL statements.
-
-    'CurrentTable = "Combined_Screenings"
-
-End Sub
 
 
 Public Sub SetFirstScreensAndEvents_CS()
@@ -17,7 +10,8 @@ Public Sub SetFirstScreensAndEvents_CS()
 2nd Final is loaded into final(far most right date) and into [First_Screening] _
 3rd FCT is loaded in to FCT date and update of [First_Screening] _
 4th AT is loaded in to AT date and update of [First_Screening] _
-5th BT is loaded in to BT date and update of [First_Screening]
+5th BT is loaded in to BT date and update of [First_Screening] _
+6th OWLD is loaded in to OWLD date
 
 'Set all date columns to <Not Found>
 Dim myDateVarList As Variant
@@ -41,6 +35,7 @@ notFound = "Not Found"
         Next myDateVarList
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
     End If
     
     myDateVarList = Empty
@@ -48,13 +43,10 @@ notFound = "Not Found"
     'Set TC data and first screens as place holder values
     Dim emptyID As String 'The dash is not used in TSM or elsewhere, becomes a visual that something was missed
     emptyID = "-"
-    
     Dim emptyEvent As String 'The double E is not used in TSM or elsewhere, becomes a visual that something was missed
     emptyEvent = "EE"
-    
     Dim emptySts_A_T As String 'The dash slash dash is not used in TSM or elsewhere, becomes a visual that something was missed
     emptySts_A_T = "-/-"
-
     CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
     & "SET " _
     & "" & CurrentTable & ".Trial_ID = '" & emptyID & "', " _
@@ -62,8 +54,7 @@ notFound = "Not Found"
     & "" & CurrentTable & ".Final_Sts_A_T = '" & emptySts_A_T & "', " _
     & "" & CurrentTable & ".First_Screening = '" & notFound & "';"
     ' Debug.Print vbCrLf & "Completed setting place holder values in columns Trial_ID, Event, Final_Sts_A_T, First_Screening."
-    
-    ' Debug.Print vbCrLf & "Completed the" & CurrentTable & "table data set with place holder values Update Query."
+    ' Debug.Print vbCrLf & "Completed the " & CurrentTable & " table data set with place holder values Update Query."
 
     'Set Final Screening as Final and as First
     CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
@@ -113,12 +104,21 @@ Public Sub SetNonShipEventScrns_CS()
 
 Dim myDateVarList As Variant
 
-    For Each myDateVarList In nonTrialsList
-        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " INNER JOIN [" & myDateVarList & "_" & curHullNum & "] ON " & CurrentTable & ".Trial_Card = [" & myDateVarList & "_" & curHullNum & "].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".[" & myDateVarList & "] = [" & myDateVarList & "_" & curHullNum & "].[TC_Screening];"
-        ' Debug.Print "done with column table: " & myDateVarList & "."
-    Next myDateVarList
+    'Check for All Reports or only Events
+    If All_or_Events = "All" Then
+        For Each myDateVarList In nonTrialsList
+            CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " INNER JOIN [" & myDateVarList & "_" & curHullNum & "] ON " & CurrentTable & ".Trial_Card = [" & myDateVarList & "_" & curHullNum & "].Trial_Card " _
+            & "SET " _
+            & "" & CurrentTable & ".[" & myDateVarList & "] = [" & myDateVarList & "_" & curHullNum & "].[TC_Screening];"
+            ' Debug.Print "done with column table: " & myDateVarList & "."
+        Next myDateVarList
+    ElseIf All_or_Events = "Events" Then
+        'This is not needed for the Events Tables
+    Else
+        'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetNonShipEventScrns_CS() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
+    End If
     
     myDateVarList = Empty
     
@@ -270,6 +270,8 @@ Dim myDateVarList As Variant
         
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetLateAdds_TrialCards_CS() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     myDateVarList = Empty
@@ -310,6 +312,8 @@ Dim myDateVarList As Variant
         Next myDateVarList
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetClosedXX_TrialCards_CS() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     myDateVarList = Empty
@@ -404,10 +408,35 @@ Dim myDateVarList As Variant
     
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetTrialCardSplits_CS() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     myDateVarList = Empty
+    
+    'Check for All Reports or only Events
+    If All_or_Events = "All" Then
+        '#Fix BUG here by going back and resetting the [TABLE].[First_Screening] to "SPLIT"
+        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+        & "SET " & CurrentTable & ".First_Screening = 'SPLIT'" _
+        & "WHERE (((" & CurrentTable & ".[" & allColumnsList(0) & "])='SPLIT') " _
+        & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+        & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01'));"
+    
+    ElseIf All_or_Events = "Events" Then
+        '#Fix BUG here by going back and resetting the [TABLE].[First_Screening] to "SPLIT"
+        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+        & "SET " & CurrentTable & ".First_Screening = 'SPLIT'" _
+        & "WHERE (((" & CurrentTable & ".[" & trialsOnlyList(0) & "])='SPLIT') " _
+        & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+        & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01'));"
         
+    Else
+        'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetTrialCardSplits_CS() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
+    End If
+    
     ' Debug.Print vbCrLf & "The Split Trial Cards Update Query completed." & vbCrLf
 
 End Sub
@@ -447,10 +476,11 @@ Set rsWriteData = CurrentDb.OpenRecordset(CurrentTable, dbOpenDynaset, dbInconsi
 rsWriteData.MoveFirst
 'myTC_Number = rsWriteData.Fields(Trial_Card)
 'Debug.Print ("myTC_Number: " & myTC_Number)
+    
 
     While (Not rsWriteData.EOF)
         myTC_Number = rsWriteData.Fields("Trial_Card")
-        Debug.Print ("myTC_Number: " & myTC_Number)
+        'Debug.Print ("myTC_Number: " & myTC_Number)
 
        'Run for BT Event to the AT Event, but not the AT Event
        'Run for AT Event to the FCT Event, but not the FCT Event
@@ -473,38 +503,23 @@ rsWriteData.MoveFirst
                 PriorDateColumnVal = allColumnsList(i - 1)
                 CurState = rsWriteData(DateColumnVal)
                 PriorState = rsWriteData(PriorDateColumnVal)
-                
-''''Need to add in 'POST BT Trial' and 'POST AT Trial' and 'POST FCT Trial' _
-    the code in SetLateAdds_TrialCards_CS() marks part 01 TC's with post trial because it is a stateless query
-                If CurState = "Not Found" _
-                    Or CurState = "POST BT Trial" _
-                    Or CurState = "POST AT Trial" _
-                    Or CurState = "POST FCT Trial" Then
+                If CurState = "Not Found" Then
                     'TC Value is missing in current report
                     'Need to test for missing TC's from report to report
-                    If PriorState = "Not Found" _
-                        Or PriorState = "POST BT Trial" _
-                        Or PriorState = "POST AT Trial" _
-                        Or PriorState = "POST FCT Trial" Then
+                    If PriorState = "Not Found" Then
                         'I am only looking back one reporting window
                         'TC Value is missing two reports in a row
                         mySparseVar = "Not Found"
-                    ElseIf PriorState <> "Not Found" _
-                        Or PriorState <> "POST BT Trial" _
-                        Or PriorState <> "POST AT Trial" _
-                        Or PriorState <> "POST FCT Trial" Then
+                    ElseIf PriorState <> "Not Found" Then
                         'The TC is not missing from the prior report
                         mySparseVar = PriorState
                     Else
                         'Untrapped error
                         mySparseVar = "991A" ' This is a flag value that something is not correct
                     End If
-                ElseIf CurState <> "Not Found" _
-                    Or CurState <> "POST BT Trial" _
-                    Or CurState <> "POST AT Trial" _
-                    Or CurState <> "POST FCT Trial" Then
-                    'The TC is not missing from the current report
-                    mySparseVar = CurState
+                ElseIf CurState <> "Not Found" Then
+                        'The TC is not missing from the current report
+                        mySparseVar = CurState
                 Else
                     'Untrapped error
                     mySparseVar = "991B" ' This is a flag value that something is not correct
@@ -518,21 +533,12 @@ rsWriteData.MoveFirst
                 CurState = rsWriteData(DateColumnVal)
                 PriorState = rsWriteData(PriorDateColumnVal)
                 Neg2State = rsWriteData(Neg2DateColumnVal)
-                If CurState = "Not Found" _
-                    Or CurState = "POST BT Trial" _
-                    Or CurState = "POST AT Trial" _
-                    Or CurState = "POST FCT Trial" Then
+                If CurState = "Not Found" Then
                     'TC Value is missing in current report
                     'Need to test for missing TC's from report to report
-                    If PriorState = "Not Found" _
-                        Or PriorState = "POST BT Trial" _
-                        Or PriorState = "POST AT Trial" _
-                        Or PriorState = "POST FCT Trial" Then
+                    If PriorState = "Not Found" Then
                         'TC Value is missing two reports in a row
-                        If Neg2State = "Not Found" _
-                            Or Neg2State = "POST BT Trial" _
-                            Or Neg2State = "POST AT Trial" _
-                            Or Neg2State = "POST FCT Trial" Then
+                        If Neg2State = "Not Found" Then
                             'I am only looking back two reporting windows
                             'TC Value is missing three reports in a row
                             mySparseVar = "Not Found"
@@ -540,22 +546,16 @@ rsWriteData.MoveFirst
                             'Untrapped error
                             mySparseVar = "992A" ' This is a flag value that something is not correct
                         End If
-                    ElseIf PriorState <> "Not Found" _
-                        Or PriorState <> "POST BT Trial" _
-                        Or PriorState <> "POST AT Trial" _
-                        Or PriorState <> "POST FCT Trial" Then
+                    ElseIf PriorState <> "Not Found" Then
                         'The TC is not missing from the prior report
                         mySparseVar = PriorState
                     Else
                         'Untrapped error
                         mySparseVar = "992B" ' This is a flag value that something is not correct
                     End If
-                ElseIf CurState <> "Not Found" _
-                    Or CurState <> "POST BT Trial" _
-                    Or CurState <> "POST AT Trial" _
-                    Or CurState <> "POST FCT Trial" Then
-                    'The TC is not missing from the current report
-                    mySparseVar = CurState
+                ElseIf CurState <> "Not Found" Then
+                        'The TC is not missing from the current report
+                        mySparseVar = CurState
                 Else
                     'Untrapped error
                     mySparseVar = "992C" ' This is a flag value that something is not correct
@@ -571,65 +571,41 @@ rsWriteData.MoveFirst
                 PriorState = rsWriteData(PriorDateColumnVal)
                 Neg2State = rsWriteData(Neg2DateColumnVal)
                 Neg3State = rsWriteData(Neg3DateColumnVal)
-                If CurState = "Not Found" _
-                    Or CurState = "POST BT Trial" _
-                    Or CurState = "POST AT Trial" _
-                    Or CurState = "POST FCT Trial" Then
+                If CurState = "Not Found" Then
                     'TC Value is missing in current report
                     'Need to test for missing TC's from report to report
-                    If PriorState = "Not Found" _
-                        Or PriorState = "POST BT Trial" _
-                        Or PriorState = "POST AT Trial" _
-                        Or PriorState = "POST FCT Trial" Then
+                    If PriorState = "Not Found" Then
                         'TC Value is missing two reports in a row
-                        If Neg2State = "Not Found" _
-                            Or Neg2State = "POST BT Trial" _
-                            Or Neg2State = "POST AT Trial" _
-                            Or Neg2State = "POST FCT Trial" Then
+                        If Neg2State = "Not Found" Then
                             'TC Value is missing three reports in a row
-                            If Neg3State = "Not Found" _
-                                Or Neg3State = "POST BT Trial" _
-                                Or Neg3State = "POST AT Trial" _
-                                Or Neg3State = "POST FCT Trial" Then
+                            If Neg3State = "Not Found" Then
                                 'TC Value is missing four reports in a row
                                 'I am only looking back three reporting windows
                                 mySparseVar = "Not Found"
-                            ElseIf Neg3State <> "Not Found" _
-                                Or Neg3State <> "POST BT Trial" _
-                                Or Neg3State <> "POST AT Trial" _
-                                Or Neg3State <> "POST FCT Trial" Then
+                            ElseIf Neg3State <> "Not Found" Then
                                 'The TC is not missing from the Neg3State report
                                 mySparseVar = Neg3State
                             Else
                                 'Untrapped error
                                 mySparseVar = "993A" ' This is a flag value that something is not correct
                             End If
-                        ElseIf Neg2State <> "Not Found" _
-                            Or Neg2State <> "POST BT Trial" _
-                            Or Neg2State <> "POST AT Trial" _
-                            Or Neg2State <> "POST FCT Trial" Then
+                        ElseIf Neg2State <> "Not Found" Then
                             'The TC is not missing from the Neg2State report
                             mySparseVar = Neg2State
                         Else
                             'Untrapped error
                             mySparseVar = "993B" ' This is a flag value that something is not correct
                         End If
-                    ElseIf PriorState <> "Not Found" _
-                        Or PriorState <> "POST BT Trial" _
-                        Or PriorState <> "POST AT Trial" _
-                        Or PriorState <> "POST FCT Trial" Then
+                    ElseIf PriorState <> "Not Found" Then
                         'The TC is not missing from the prior report
                         mySparseVar = PriorState
                     Else
                         'Untrapped error
                         mySparseVar = "993C" ' This is a flag value that something is not correct
                     End If
-                ElseIf CurState <> "Not Found" _
-                    Or CurState <> "POST BT Trial" _
-                    Or CurState <> "POST AT Trial" _
-                    Or CurState <> "POST FCT Trial" Then
-                    'The TC is not missing from the current report
-                    mySparseVar = CurState
+                ElseIf CurState <> "Not Found" Then
+                        'The TC is not missing from the current report
+                        mySparseVar = CurState
                 Else
                     'Untrapped error
                     mySparseVar = "993D" ' This is a flag value that something is not correct
@@ -654,6 +630,7 @@ rsWriteData.MoveFirst
                 rsWriteData.Update
                 
             End If
+            
             
             PriorDateColumnVal = Empty
             Neg2DateColumnVal = Empty
