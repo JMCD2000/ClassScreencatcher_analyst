@@ -75,6 +75,7 @@ EventFilterList.Add "((Event = 'FCT') AND (Trial_ID LIKE 'F*'))" ''This is FCT N
 EventFilterList.Add "((Event <> 'FCT') AND (Trial_ID LIKE '*F*'))" 'This is FCT Roll and Splits
 EventFilterList.Add "((Event = 'BT') OR (Event = 'AT') OR (Event = 'FCT'))" 'This is All BT/AT/FCT New and Splits
 EventFilterList.Add "(((Event = 'AT') OR (Event = 'FCT')) AND ((Trial_ID LIKE '*C*') OR (Trial_ID LIKE '*F*')))" 'This is INSURV New, Roll and Splits
+'EventFilterList.Add "((Trial_ID LIKE '*C*') OR (Trial_ID LIKE '*F*'))" 'This is INSURV New, Roll and Splits
 
 End Sub
 
