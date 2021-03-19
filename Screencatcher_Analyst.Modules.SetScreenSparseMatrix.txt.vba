@@ -1,15 +1,8 @@
 Option Compare Database
+'This has issues with the way that splits are handeled and the way that cards are handeled prior to the Event
+'The use of SPLIT until the actual split occures causes counting issues because the screening changes from SPLIT to the actual screening
+'The use of NotFound until the trial card is actually written at Event just looks messy, would like to change this
 Option Explicit
-
-
-Public Function SetCurrentWorkingTable_SOSM(ByVal MatrixTBL As String, ByVal ReferenceTBL As String)
-'This sub is setting the current working _
-table that is used in all the SQL statements.
-
-'CurrentTable = MatrixTBL
-'SparseRefTable = ReferenceTBL
-
-End Function
 
 
 Public Sub SetFirstScreensAndEvents_SOSM()
@@ -47,6 +40,8 @@ emptySts_A_T = "-/-"
         Next myDateVarList
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetFirstScreensAndEvents_SOSM() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
         
     myDateVarList = Empty
@@ -274,6 +269,8 @@ Dim dbs_Sparse As DAO.Database
     
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function Build_and_Set_Aggregated_Screen_SOSM() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     rst.Close
