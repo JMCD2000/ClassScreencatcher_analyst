@@ -1,14 +1,8 @@
 Option Compare Database
+'This has issues with the way that splits are handeled and the way that cards are handeled prior to the Event
+'The use of SPLIT until the actual split occures causes counting issues because the screening changes from SPLIT to the actual screening
+'The use of NotFound until the trial card is actually written at Event just looks messy, would like to change this
 Option Explicit
-
-
-Public Sub SetCurrentWorkingTable_SO()
-'This sub is setting the current working _
-table that is used in all the SQL statements.
-
-'CurrentTable = "Screenings_Only"
-
-End Sub
 
 
 Public Sub SetFirstScreensAndEvents_SO()
@@ -41,6 +35,8 @@ notFound = "Not Found"
         Next myDateVarList
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetFirstScreensAndEvents_SO() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
         
     myDateVarList = Empty
@@ -270,6 +266,8 @@ Dim myDateVarList As Variant
                 
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetLateAdds_TrialCards_SO() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     myDateVarList = Empty
@@ -310,6 +308,8 @@ Dim myDateVarList As Variant
         Next myDateVarList
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetClosedXX_TrialCards_SO() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     myDateVarList = Empty
@@ -404,10 +404,35 @@ Dim myDateVarList As Variant
 
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetTrialCardSplits_SO() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     myDateVarList = Empty
+    
+    'Check for All Reports or only Events
+    If All_or_Events = "All" Then
+        '#Fix BUG here by going back and resetting the [TABLE].[First_Screening] to "SPLIT"
+        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+        & "SET " & CurrentTable & ".First_Screening = 'SPLIT'" _
+        & "WHERE (((" & CurrentTable & ".[" & allColumnsList(0) & "])='SPLIT') " _
+        & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+        & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01'));"
+    
+    ElseIf All_or_Events = "Events" Then
+        '#Fix BUG here by going back and resetting the [TABLE].[First_Screening] to "SPLIT"
+        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+        & "SET " & CurrentTable & ".First_Screening = 'SPLIT'" _
+        & "WHERE (((" & CurrentTable & ".[" & trialsOnlyList(0) & "])='SPLIT') " _
+        & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+        & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01'));"
         
+    Else
+        'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetTrialCardSplits_SO() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
+    End If
+    
 ' Debug.Print vbCrLf & "The Split Trial Cards Update Query completed." & vbCrLf
 
 End Sub
