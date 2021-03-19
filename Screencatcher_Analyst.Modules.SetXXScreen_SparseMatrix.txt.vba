@@ -1,15 +1,8 @@
 Option Compare Database
+'This has issues with the way that splits are handeled and the way that cards are handeled prior to the Event
+'The use of SPLIT until the actual split occures causes counting issues because the screening changes from SPLIT to the actual screening
+'The use of NotFound until the trial card is actually written at Event just looks messy, would like to change this
 Option Explicit
-
-
-Public Sub SetCurrentWorkingTable_XXSM()
-'This sub is setting the current working _
-table that is used in all the SQL statements.
-
-'CurrentTable = "XX_Screen_Only_SparseMatrix"
-'SparseRefTable = "XX_Screen_Only"
-
-End Sub
 
 
 Public Sub SetFirstScreensAndEvents_XXSM()
