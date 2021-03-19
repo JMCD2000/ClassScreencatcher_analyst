@@ -268,7 +268,6 @@ continueTime = startTime(thisProcedure)
 AddingToMyDateLists 'Run the list builder
 
 'Call the SetCombinedScreenings Module and run through all of the Subs
-'SetCurrentWorkingTable_CS 'Run the Current Working Table sub
 CurrentTable = "All_Combined_Screenings"
 All_or_Events = "All"
 SetFirstScreensAndEvents_CS 'This is to load or reload the screenings into the Combined_Screenings Table
@@ -282,7 +281,6 @@ SetTrialCardsMissingFromReports_CS allColumnsList_FCT, allColumnsList_OWLD
 CurrentTable = Empty
 All_or_Events = Empty
 
-'SetCurrentWorkingTable_CS 'Run the Current Working Table sub
 CurrentTable = "Events_Combined_Screenings"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_CS 'This is to load or reload the screenings into the Combined_Screenings Table
@@ -319,7 +317,6 @@ continueTime = startTime(thisProcedure)
 AddingToMyDateLists 'Run the list builder
 
 'Call the SetScreeningsOnly Module and run through all of the Subs
-'SetCurrentWorkingTable_SO 'Run the Current Working Table sub
 CurrentTable = "All_Screenings_Only"
 All_or_Events = "All"
 SetFirstScreensAndEvents_SO 'This is to load or reload the screenings into the Combined_Screenings Table
@@ -333,7 +330,6 @@ SetTrialCardsMissingFromReports_CS allColumnsList_FCT, allColumnsList_OWLD
 CurrentTable = Empty
 All_or_Events = Empty
 
-'SetCurrentWorkingTable_SO 'Run the Current Working Table sub
 CurrentTable = "Events_Screenings_Only"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_SO 'This is to load or reload the screenings into the Combined_Screenings Table
@@ -370,7 +366,6 @@ continueTime = startTime(thisProcedure)
 AddingToMyDateLists 'Run the list builder
 
 'Call the SetXXScreenOnly Module and run through all of the Subs
-'SetCurrentWorkingTable_XXSO 'Run the Current Working Table sub
 CurrentTable = "All_XX_Screen_Only"
 All_or_Events = "All"
 SetFirstScreensAndEvents_XXSO 'This is to load or reload the screenings into the Combined_Screenings Table
@@ -384,7 +379,6 @@ SetTrialCardsMissingFromReports_CS allColumnsList_FCT, allColumnsList_OWLD
 CurrentTable = Empty
 All_or_Events = Empty
 
-'SetCurrentWorkingTable_XXSO 'Run the Current Working Table sub
 CurrentTable = "Events_XX_Screen_Only"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_XXSO 'This is to load or reload the screenings into the Combined_Screenings Table
@@ -421,20 +415,20 @@ continueTime = startTime(thisProcedure)
 AddingToMyDateLists 'Run the list builder
 
 'Call the SetScreenAgg Module and run through all of the Subs
-'SetCurrentWorkingTable_TCSA 'Run the Current Working Table sub
 CurrentTable = "All_TC_Screen_Agg"
 All_or_Events = "All"
 SetFirstScreensAndEvents_TCSA 'This is to load or reload the screenings into the Combined_Screenings Table
 Build_and_Set_Aggregated_Screen_TCSA
+Build_and_Set_Aggregated_Screen_OWLD_Limit_TCSA
 
 CurrentTable = Empty
 All_or_Events = Empty
 
-'SetCurrentWorkingTable_TCSA 'Run the Current Working Table sub
 CurrentTable = "Events_TC_Screen_Agg"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_TCSA 'This is to load or reload the screenings into the Combined_Screenings Table
 Build_and_Set_Aggregated_Screen_TCSA
+Build_and_Set_Aggregated_Screen_OWLD_Limit_TCSA
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
@@ -466,24 +460,26 @@ AddingToMyDateLists 'Run the list builder
 
 'Call the SetScreenSparseMatrix Module and run through all of the Subs
 'This is to load or reload the screening sparse matrix into the <TABLE>_SparseMatrix
-'SetCurrentWorkingTable_SOSM "Screenings_Only_SparseMatrix", "Screenings_Only"
 CurrentTable = "All_Screenings_Only_SparseMatrix"
 SparseRefTable = "All_Screenings_Only"
 All_or_Events = "All"
 SetFirstScreensAndEvents_SOSM
 Build_and_Set_Aggregated_Screen_SOSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
+Set_SparseMatrix_Counts_SMC
+Set_SparseMatrix_Counts_SMC_DEL
 
 CurrentTable = Empty
 SparseRefTable = Empty
 All_or_Events = Empty
 
 'This is to load or reload the screening sparse matrix into the <TABLE>_SparseMatrix
-'SetCurrentWorkingTable_SOSM "Combined_Screenings_SparseMatrix", "Combined_Screenings"
 CurrentTable = "All_Combined_Screenings_SparseMatrix"
 SparseRefTable = "All_Combined_Screenings"
 All_or_Events = "All"
 SetFirstScreensAndEvents_SOSM
 Build_and_Set_Aggregated_Screen_SOSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
+Set_SparseMatrix_Counts_SMC
+Set_SparseMatrix_Counts_SMC_DEL
 
 CurrentTable = Empty
 SparseRefTable = Empty
@@ -491,24 +487,26 @@ All_or_Events = Empty
 
 'Call the SetScreenSparseMatrix Module and run through all of the Subs
 'This is to load or reload the screening sparse matrix into the <TABLE>_SparseMatrix
-'SetCurrentWorkingTable_SOSM "Screenings_Only_SparseMatrix", "Screenings_Only"
 CurrentTable = "Events_Screenings_Only_SparseMatrix"
 SparseRefTable = "Events_Screenings_Only"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_SOSM
 Build_and_Set_Aggregated_Screen_SOSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
+Set_SparseMatrix_Counts_SMC
+Set_SparseMatrix_Counts_SMC_DEL
 
 CurrentTable = Empty
 SparseRefTable = Empty
 All_or_Events = Empty
 
 'This is to load or reload the screening sparse matrix into the <TABLE>_SparseMatrix
-'SetCurrentWorkingTable_SOSM "Combined_Screenings_SparseMatrix", "Combined_Screenings"
 CurrentTable = "Events_Combined_Screenings_SparseMatrix"
 SparseRefTable = "Events_Combined_Screenings"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_SOSM
 Build_and_Set_Aggregated_Screen_SOSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
+Set_SparseMatrix_Counts_SMC
+Set_SparseMatrix_Counts_SMC_DEL
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
@@ -541,23 +539,25 @@ AddingToMyDateLists 'Run the list builder
 
 'Call the SetCombinedScreenings Module and run through all of the Subs
 'This is to load or reload the screening sparse matrix into the <TABLE>_SparseMatrix
-'SetCurrentWorkingTable_XXSM
 CurrentTable = "All_XX_Screen_Only_SparseMatrix"
 SparseRefTable = "All_XX_Screen_Only"
 All_or_Events = "All"
 SetFirstScreensAndEvents_XXSM
 Build_and_Set_Aggregated_Screen_XXSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
+Set_SparseMatrix_Counts_XXSMC
+Set_SparseMatrix_Counts_XXSMC_DEL
 
 CurrentTable = Empty
 SparseRefTable = Empty
 All_or_Events = Empty
 
-'SetCurrentWorkingTable_XXSM
 CurrentTable = "Events_XX_Screen_Only_SparseMatrix"
 SparseRefTable = "Events_XX_Screen_Only"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_XXSM
 Build_and_Set_Aggregated_Screen_XXSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
+Set_SparseMatrix_Counts_XXSMC
+Set_SparseMatrix_Counts_XXSMC_DEL
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
