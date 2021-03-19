@@ -116,12 +116,12 @@ myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTimeTable & " SET " & CurrentTimeT
 ' Debug.Print (myUpDate_SQL)
 dbs.Execute myUpDate_SQL
 
-Debug.Print ("Procedure: " & callingProcedure)
+'Debug.Print ("Procedure: " & callingProcedure)
 Debug.Print ("End Time: " & myEndTime)
 
 runTime (callingProcedure)
 
-Debug.Print ("Run Time: " & myRunTime)
+'Debug.Print ("Run Time: " & myRunTime)
 
 End Function
 
