@@ -11,17 +11,17 @@ Public Sub SetFirstScreensAndEvents_XXSM()
 'Set data columns to <Not Found>
 Dim myDateVarList As Variant
 Dim notFound As String 'The <Not Found> is not used in TSM or elsewhere, becomes a visual that something was missed
-notFound = "Not Found"
-
-'Set Trial ID, Event and Final Status values as place holder values
+Dim notCounted As Integer 'The 999 is not an expected count for rescreens and becomes a visual that something was missed
 Dim emptyID As String 'The dash is not used in TSM or elsewhere, becomes a visual that something was missed
-emptyID = "-"
-    
 Dim emptyEvent As String 'The double E is not used in TSM or elsewhere, becomes a visual that something was missed
-emptyEvent = "EE"
-    
 Dim emptySts_A_T As String 'The dash slash dash is not used in TSM or elsewhere, becomes a visual that something was missed
-emptySts_A_T = "-/-"
+
+    'Set Trial ID, Event and Final Status values as place holder values
+    notFound = "Not Found"
+    notCounted = 999
+    emptyID = "-"
+    emptyEvent = "EE"
+    emptySts_A_T = "-/-"
 
     'Check for All Reports or only Events
     If All_or_Events = "All" Then
@@ -40,6 +40,8 @@ emptySts_A_T = "-/-"
         Next myDateVarList
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetFirstScreensAndEvents_XXSM() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
         
     myDateVarList = Empty
@@ -48,7 +50,15 @@ emptySts_A_T = "-/-"
     & "SET " _
     & "" & CurrentTable & ".Trial_ID = '" & emptyID & "', " _
     & "" & CurrentTable & ".Event = '" & emptyEvent & "', " _
-    & "" & CurrentTable & ".Final_Sts_A_T = '" & emptySts_A_T & "';"
+    & "" & CurrentTable & ".Final_Sts_A_T = '" & emptySts_A_T & "', " _
+    & "" & CurrentTable & ".Rescreen_counts_BT_to_DEL = '" & notCounted & "', " _
+    & "" & CurrentTable & ".Rescreen_counts_AT_to_DEL = '" & notCounted & "', " _
+    & "" & CurrentTable & ".Rescreen_counts_BT_to_OWLD = '" & notCounted & "', " _
+    & "" & CurrentTable & ".Rescreen_counts_AT_to_OWLD = '" & notCounted & "', " _
+    & "" & CurrentTable & ".Rescreen_counts_FCT_to_OWLD = '" & notCounted & "', " _
+    & "" & CurrentTable & ".Rescreen_counts_BT_to_Final = '" & notCounted & "', " _
+    & "" & CurrentTable & ".Rescreen_counts_AT_to_Final = '" & notCounted & "', " _
+    & "" & CurrentTable & ".Rescreen_counts_FCT_to_Final = '" & notCounted & "';"
     ' Debug.Print "Completed the" & CurrentTable & "table data set with place holder values Update Query."
     
     'Set Trial ID, Event and Final Status values
@@ -59,9 +69,7 @@ emptySts_A_T = "-/-"
     & "" & CurrentTable & ".Final_Sts_A_T = [" & SparseRefTable & "].[Final_Sts_A_T];"
     ' Debug.Print "Completed setting values in columns Trial_ID, Event, Final_Sts_A_T."
     
-    'ClearMyDateLists 'Empty created list objects
-    
-    Debug.Print vbCrLf & "The " & CurrentTable & " Table is now ready for Sparse Matrix Calculations." & vbCrLf
+    'Debug.Print vbCrLf & "The " & CurrentTable & " Table is now ready for Sparse Matrix Calculations." & vbCrLf
 
 End Sub
 
@@ -77,20 +85,20 @@ Dim mySparseVar As String ' This holds the
 Dim aggregatedScreensVar As String ' This holds the screens as they are collected
 Dim curTrial_Card As String ' This is for the update back to the TC_Screen_Agg Table
 'Open a recordset to loop through each Record in the recordset
-Dim dbs As DAO.Database
+Dim dbs_Read As DAO.Database
 Dim rst As DAO.Recordset ' or Recordset2?
 Dim mySQLstring As String
 'Open a recordset to update the TC_Screen_Agg table
-Dim dbs_Sparse As DAO.Database
+Dim dbs_Write As DAO.Database
     
     'simple varible referenced typed SQL statement
     mySQLstring = "SELECT " & SparseRefTable & ".* FROM " & SparseRefTable & " INNER JOIN " & CurrentTable & " ON " & SparseRefTable & ".Trial_Card = " & CurrentTable & ".Trial_Card;"
 
     'Open a pointer to current database
-    Set dbs = CurrentDb()
-    Set dbs_Sparse = CurrentDb()
+    Set dbs_Read = CurrentDb()
+    Set dbs_Write = CurrentDb()
     'Create the recordset with my SQL string
-    Set rst = dbs.OpenRecordset(mySQLstring)
+    Set rst = dbs_Read.OpenRecordset(mySQLstring)
 
     'Check for All Reports or only Events
     If All_or_Events = "All" Then
@@ -111,7 +119,28 @@ Dim dbs_Sparse As DAO.Database
                     'I am on the first date column, set prior screen = [First_Screening]
                     priorScreenVar = rst![First_Screening]
                     currentScreenVar = rst("" & myDateVarList & "") ' rst![ & myDateVarList & ]
-                    aggregatedScreensVar = rst![First_Screening]
+'                    If priorScreenVar = "Not Found" _
+'                        Or priorScreenVar = "POST BT Trial" _
+'                        Or priorScreenVar = "POST AT Trial" _
+'                        Or priorScreenVar = "POST FCT Trial" _
+'                        Or priorScreenVar = "SPLIT" _
+'                        Or priorScreenVar = "X/X" _
+'                        Or priorScreenVar = "" _
+'                        Or priorScreenVar = Empty _
+'                        Then
+                    If priorScreenVar = "Not Found" _
+                        Or priorScreenVar = "POST BT Trial" _
+                        Or priorScreenVar = "POST AT Trial" _
+                        Or priorScreenVar = "POST FCT Trial" _
+                        Or priorScreenVar = "X/X" _
+                        Or priorScreenVar = "" _
+                        Or priorScreenVar = Empty _
+                        Then
+                        'Do not add this to the aggragate screening
+                        'Pass
+                    Else
+                        aggregatedScreensVar = rst![First_Screening]
+                    End If
                     'Leave myIndex set to zero here so it is lagging next time arround
                     'Debug.Print ("First date column of record row: " & myDateVarList)
                 ElseIf myDateVarList = allColumnsList.Item(allColumnsList.Count - 1) Then
@@ -132,11 +161,19 @@ Dim dbs_Sparse As DAO.Database
                 'Debug.Print ("currentScreenVar =" & currentScreenVar & "=")
                 'Debug.Print ("priorScreenVar =" & priorScreenVar & "=")
                     
+'                If currentScreenVar = "Not Found" _
+'                    Or currentScreenVar = "POST BT Trial" _
+'                    Or currentScreenVar = "POST AT Trial" _
+'                    Or currentScreenVar = "POST FCT Trial" _
+'                    Or currentScreenVar = "SPLIT" _
+'                    Or currentScreenVar = "X/X" _
+'                    Or currentScreenVar = "" _
+'                    Or currentScreenVar = Empty _
+'                    Then
                 If currentScreenVar = "Not Found" _
                     Or currentScreenVar = "POST BT Trial" _
                     Or currentScreenVar = "POST AT Trial" _
                     Or currentScreenVar = "POST FCT Trial" _
-                    Or currentScreenVar = "SPLIT" _
                     Or currentScreenVar = "X/X" _
                     Or currentScreenVar = "" _
                     Or currentScreenVar = Empty _
@@ -150,11 +187,19 @@ Dim dbs_Sparse As DAO.Database
                 ElseIf currentScreenVar <> priorScreenVar Then
                     'The screening has changed and mark this screening
                     'Debug.Print ("currentScreenVar = priorScreenVar : " & currentScreenVar & " EQUALS " & priorScreenVar)
+'                    If priorScreenVar = "Not Found" _
+'                        Or priorScreenVar = "POST BT Trial" _
+'                        Or priorScreenVar = "POST AT Trial" _
+'                        Or priorScreenVar = "POST FCT Trial" _
+'                        Or priorScreenVar = "SPLIT" _
+'                        Or priorScreenVar = "X/X" _
+'                        Or priorScreenVar = "" _
+'                        Or priorScreenVar = Empty _
+'                        Then
                     If priorScreenVar = "Not Found" _
                         Or priorScreenVar = "POST BT Trial" _
                         Or priorScreenVar = "POST AT Trial" _
                         Or priorScreenVar = "POST FCT Trial" _
-                        Or priorScreenVar = "SPLIT" _
                         Or priorScreenVar = "X/X" _
                         Or priorScreenVar = "" _
                         Or priorScreenVar = Empty _
@@ -175,11 +220,18 @@ Dim dbs_Sparse As DAO.Database
                 
                 'Debug.Print ("Cur TC: " & curTrial_Card)
                 'Update the Sparse Matrix table with the Value of 0 or 1
-                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " " _
+'                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " " _
+'                & "SET " _
+'                & "" & CurrentTable & ".[" & myDateVarList & "] = '" & mySparseVar & "' " _
+'                & "WHERE " _
+'                & "" & CurrentTable & ".Trial_Card = '" & curTrial_Card & "';"
+                
+                dbs_Write.Execute "UPDATE DISTINCTROW " & CurrentTable & " " _
                 & "SET " _
                 & "" & CurrentTable & ".[" & myDateVarList & "] = '" & mySparseVar & "' " _
                 & "WHERE " _
                 & "" & CurrentTable & ".Trial_Card = '" & curTrial_Card & "';"
+                
                 
             Next myDateVarList
             
@@ -210,7 +262,28 @@ Dim dbs_Sparse As DAO.Database
                     'I am on the first date column, set prior screen = [First_Screening]
                     priorScreenVar = rst![First_Screening]
                     currentScreenVar = rst("" & myDateVarList & "") ' rst![ & myDateVarList & ]
-                    aggregatedScreensVar = rst![First_Screening]
+'                    If priorScreenVar = "Not Found" _
+'                        Or priorScreenVar = "POST BT Trial" _
+'                        Or priorScreenVar = "POST AT Trial" _
+'                        Or priorScreenVar = "POST FCT Trial" _
+'                        Or priorScreenVar = "SPLIT" _
+'                        Or priorScreenVar = "X/X" _
+'                        Or priorScreenVar = "" _
+'                        Or priorScreenVar = Empty _
+'                        Then
+                    If priorScreenVar = "Not Found" _
+                        Or priorScreenVar = "POST BT Trial" _
+                        Or priorScreenVar = "POST AT Trial" _
+                        Or priorScreenVar = "POST FCT Trial" _
+                        Or priorScreenVar = "X/X" _
+                        Or priorScreenVar = "" _
+                        Or priorScreenVar = Empty _
+                        Then
+                        'Do not add this to the aggragate screening
+                        'Pass
+                    Else
+                        aggregatedScreensVar = rst![First_Screening]
+                    End If
                     'Leave myIndex set to zero here so it is lagging next time arround
                     'Debug.Print ("First date column of record row: " & myDateVarList)
                 ElseIf myDateVarList = trialsOnlyList.Item(trialsOnlyList.Count - 1) Then
@@ -231,11 +304,19 @@ Dim dbs_Sparse As DAO.Database
                 'Debug.Print ("currentScreenVar =" & currentScreenVar & "=")
                 'Debug.Print ("priorScreenVar =" & priorScreenVar & "=")
                     
+'                If currentScreenVar = "Not Found" _
+'                    Or currentScreenVar = "POST BT Trial" _
+'                    Or currentScreenVar = "POST AT Trial" _
+'                    Or currentScreenVar = "POST FCT Trial" _
+'                    Or currentScreenVar = "SPLIT" _
+'                    Or currentScreenVar = "X/X" _
+'                    Or currentScreenVar = "" _
+'                    Or currentScreenVar = Empty _
+'                    Then
                 If currentScreenVar = "Not Found" _
                     Or currentScreenVar = "POST BT Trial" _
                     Or currentScreenVar = "POST AT Trial" _
                     Or currentScreenVar = "POST FCT Trial" _
-                    Or currentScreenVar = "SPLIT" _
                     Or currentScreenVar = "X/X" _
                     Or currentScreenVar = "" _
                     Or currentScreenVar = Empty _
@@ -249,11 +330,19 @@ Dim dbs_Sparse As DAO.Database
                 ElseIf currentScreenVar <> priorScreenVar Then
                     'The screening has changed and mark this screening
                     'Debug.Print ("currentScreenVar = priorScreenVar : " & currentScreenVar & " EQUALS " & priorScreenVar)
+'                    If priorScreenVar = "Not Found" _
+'                        Or priorScreenVar = "POST BT Trial" _
+'                        Or priorScreenVar = "POST AT Trial" _
+'                        Or priorScreenVar = "POST FCT Trial" _
+'                        Or priorScreenVar = "SPLIT" _
+'                        Or priorScreenVar = "X/X" _
+'                        Or priorScreenVar = "" _
+'                        Or priorScreenVar = Empty _
+'                        Then
                     If priorScreenVar = "Not Found" _
                         Or priorScreenVar = "POST BT Trial" _
                         Or priorScreenVar = "POST AT Trial" _
                         Or priorScreenVar = "POST FCT Trial" _
-                        Or priorScreenVar = "SPLIT" _
                         Or priorScreenVar = "X/X" _
                         Or priorScreenVar = "" _
                         Or priorScreenVar = Empty _
@@ -266,15 +355,15 @@ Dim dbs_Sparse As DAO.Database
                     mySparseVar = 99 ' This is a flag value that something is not correct
                 End If
                 
-                'Debug.Print ("UPDATE DISTINCTROW " & CurrentTable & " " _
-                & "SET " _
-                & "" & CurrentTable & ".[" & myDateVarList & "] = '" & mySparseVar & "' " _
-                & "WHERE " _
-                & "" & CurrentTable & ".Trial_Card = '" & curTrial_Card & "';")
-                
                 'Debug.Print ("Cur TC: " & curTrial_Card)
                 'Update the Sparse Matrix table with the Value of 0 or 1
-                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " " _
+'                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " " _
+'                & "SET " _
+'                & "" & CurrentTable & ".[" & myDateVarList & "] = '" & mySparseVar & "' " _
+'                & "WHERE " _
+'                & "" & CurrentTable & ".Trial_Card = '" & curTrial_Card & "';"
+                
+                dbs_Write.Execute "UPDATE DISTINCTROW " & CurrentTable & " " _
                 & "SET " _
                 & "" & CurrentTable & ".[" & myDateVarList & "] = '" & mySparseVar & "' " _
                 & "WHERE " _
@@ -296,8 +385,8 @@ Dim dbs_Sparse As DAO.Database
     End If
     
     rst.Close
-    dbs.Close
-    dbs_Sparse.Close
+    dbs_Read.Close
+    dbs_Write.Close
    
     'Debug.Print vbCrLf & "The Trial Cards Sparse Matrix Update Query completed." & vbCrLf
 
