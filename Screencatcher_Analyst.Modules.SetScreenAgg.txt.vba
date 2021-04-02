@@ -7,112 +7,114 @@ Option Explicit
 
 
 Public Sub SetFirstScreensAndEvents_TCSA()
-'This is to load or reload the screening aggregations into the TC_Screen_Agg Table _
-1st text <Not Found> is entered in every field _
-2nd Final is loaded into [Last_Screen] and into [First_Screen] from XX_Screen_Only
+'This is to load or reload the screening aggregations into the TC_Screen_Agg Table
 
 'Set data columns to <Not Found>
 Dim myDateVarList As Variant
 Dim notFound As String 'The <Not Found> is not used in TSM or elsewhere, becomes a visual that something was missed
-notFound = "Not Found"
+Dim notCounted As Integer 'The 999 is not an expected count for rescreens and becomes a visual that something was missed
+Dim emptyID As String 'The dash is not used in TSM or elsewhere, becomes a visual that something was missed
+Dim emptyEvent As String 'The double E is not used in TSM or elsewhere, becomes a visual that something was missed
+Dim emptySts_A_T As String 'The dash slash dash is not used in TSM or elsewhere, becomes a visual that something was missed
 
     'Set TC data and first screens as place holder values
-    Dim emptyID As String 'The dash is not used in TSM or elsewhere, becomes a visual that something was missed
+    notFound = "Not Found"
+    notCounted = 999
     emptyID = "-"
-    Dim emptyEvent As String 'The double E is not used in TSM or elsewhere, becomes a visual that something was missed
     emptyEvent = "EE"
-    Dim emptySts_A_T As String 'The dash slash dash is not used in TSM or elsewhere, becomes a visual that something was missed
     emptySts_A_T = "-/-"
 
     'Check for All Reports or only Events
     If All_or_Events = "All" Then
-        'This is setting the default values for the First Screen field
-        'CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [All_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [All_XX_Screen_Only].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".[First_Screen] = '" & notFound & "';"
-        ' Debug.Print "done with Table Column: " & CurrentTable & ".[First_Screen]"
-        
-        'This is setting the default values for the Aggregated Screen field
-        'CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [All_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [All_XX_Screen_Only].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".[Aggregated_Screen] = '" & notFound & "';"
-        ' Debug.Print "done with Table Column: " & CurrentTable & ".[Aggregated_Screen]"
-        
-        'This is setting the default values for the Last Screen field
-        'CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [All_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [All_XX_Screen_Only].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".[Last_Screen] = '" & notFound & "';"
-        ' Debug.Print "done with Table Column: " & CurrentTable & ".[Last_Screen]"
-
-        'This is setting the default dummy values for the First_Screen, Aggregated_Screen, Last_Screen fields
-        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [All_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [All_XX_Screen_Only].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".First_Screen = '" & notFound & "', " _
-        & "" & CurrentTable & ".Aggregated_Screen = '" & notFound & "', " _
-        & "" & CurrentTable & ".Last_Screen = '" & notFound & "';"
-
         'This is setting the default dummy values for the Trial_ID, Final_Sts_A_T, Event fields
         CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [All_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [All_XX_Screen_Only].Trial_Card " _
         & "SET " _
         & "" & CurrentTable & ".Trial_ID = '" & emptyID & "', " _
+        & "" & CurrentTable & ".Event = '" & emptyEvent & "', " _
         & "" & CurrentTable & ".Final_Sts_A_T = '" & emptySts_A_T & "', " _
-        & "" & CurrentTable & ".Event = '" & emptyEvent & "';"
+        & "" & CurrentTable & ".First_Screen = '" & notFound & "', " _
+        & "" & CurrentTable & ".Last_Screen = '" & notFound & "';"
         ' Debug.Print "Completed setting place holder values in columns Trial_ID, and Event."
         ' Debug.Print "Completed the" & CurrentTable & "table data set with place holder values Update Query."
+    
+        'This is setting the default dummy values for the First_Screen, Aggregated_Screen, Last_Screen fields
+        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [All_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [All_XX_Screen_Only].Trial_Card " _
+        & "SET " _
+        & "" & CurrentTable & ".Rescreen_aggregates_BT_to_DEL = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_AT_to_DEL = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_BT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_AT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_FCT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_BT_to_Final = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_AT_to_Final = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_FCT_to_Final = '" & notFound & "';"
+        
+        'This is setting the default dummy values for the First_Screen, Aggregated_Screen, Last_Screen fields
+        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [All_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [All_XX_Screen_Only].Trial_Card " _
+        & "SET " _
+        & "" & CurrentTable & ".Rescreen_counts_BT_to_DEL = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_AT_to_DEL = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_BT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_AT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_FCT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_BT_to_Final = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_AT_to_Final = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_FCT_to_Final = '" & notFound & "';"
     
         'Set First Screening, Final Screening, Final Status, Trial ID, and Event with data from Table All_XX_Screen_Only
         CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [All_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [All_XX_Screen_Only].Trial_Card " _
         & "SET " _
-        & "" & CurrentTable & ".First_Screen = [All_XX_Screen_Only].[First_Screening], " _
-        & "" & CurrentTable & ".[Last_Screen] = [All_XX_Screen_Only].[" & columnFinal & "], " _
-        & "" & CurrentTable & ".Final_Sts_A_T = [All_XX_Screen_Only].[Final_Sts_A_T], " _
         & "" & CurrentTable & ".Trial_ID = [All_XX_Screen_Only].[Trial_ID], " _
-        & "" & CurrentTable & ".Event = [All_XX_Screen_Only].[Event];"
+        & "" & CurrentTable & ".Event = [All_XX_Screen_Only].[Event], " _
+        & "" & CurrentTable & ".Final_Sts_A_T = [All_XX_Screen_Only].[Final_Sts_A_T], " _
+        & "" & CurrentTable & ".First_Screen = [All_XX_Screen_Only].[First_Screening], " _
+        & "" & CurrentTable & ".[Last_Screen] = [All_XX_Screen_Only].[" & columnFinal & "];"
         ' Debug.Print "Completed setting values in columns Trial_ID, Event, First_Screen, Last_Screen."
 
     ElseIf All_or_Events = "Events" Then
-        'This is setting the default values for the First Screen field
-        'CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [Events_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [Events_XX_Screen_Only].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".[First_Screen] = '" & notFound & "';"
-        ' Debug.Print "done with Table Column: " & CurrentTable & ".[First_Screen]"
-        
-        'This is setting the default values for the Aggregated Screen field
-        'CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [Events_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [Events_XX_Screen_Only].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".[Aggregated_Screen] = '" & notFound & "';"
-        ' Debug.Print "done with Table Column: " & CurrentTable & ".[Aggregated_Screen]"
-        
-        'This is setting the default values for the Last Screen field
-        'CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [Events_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [Events_XX_Screen_Only].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".[Last_Screen] = '" & notFound & "';"
-        ' Debug.Print "done with Table Column: " & CurrentTable & ".[Last_Screen]"
-        
-        'This is setting the default dummy values for the First_Screen, Aggregated_Screen, Last_Screen fields
-        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [Events_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [Events_XX_Screen_Only].Trial_Card " _
-        & "SET " _
-        & "" & CurrentTable & ".First_Screen = '" & emptyID & "', " _
-        & "" & CurrentTable & ".Aggregated_Screen = '" & emptySts_A_T & "', " _
-        & "" & CurrentTable & ".Last_Screen = '" & emptyEvent & "';"
-
         'This is setting the default dummy values for the Trial_ID, Final_Sts_A_T, Event fields
         CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [Events_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [Events_XX_Screen_Only].Trial_Card " _
         & "SET " _
         & "" & CurrentTable & ".Trial_ID = '" & emptyID & "', " _
+        & "" & CurrentTable & ".Event = '" & emptyEvent & "', " _
         & "" & CurrentTable & ".Final_Sts_A_T = '" & emptySts_A_T & "', " _
-        & "" & CurrentTable & ".Event = '" & emptyEvent & "';"
+        & "" & CurrentTable & ".First_Screen = '" & notFound & "', " _
+        & "" & CurrentTable & ".Last_Screen = '" & notFound & "';"
         ' Debug.Print "Completed setting place holder values in columns Trial_ID, and Event."
         ' Debug.Print "Completed the" & CurrentTable & "table data set with place holder values Update Query."
-    
+        
+        'This is setting the default dummy values for the First_Screen, Aggregated_Screen, Last_Screen fields
+        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [Events_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [Events_XX_Screen_Only].Trial_Card " _
+        & "SET " _
+        & "" & CurrentTable & ".Rescreen_aggregates_BT_to_DEL = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_AT_to_DEL = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_BT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_AT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_FCT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_BT_to_Final = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_AT_to_Final = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_aggregates_FCT_to_Final = '" & notFound & "';"
+        
+        'This is setting the default dummy values for the First_Screen, Aggregated_Screen, Last_Screen fields
+        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [Events_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [Events_XX_Screen_Only].Trial_Card " _
+        & "SET " _
+        & "" & CurrentTable & ".Rescreen_counts_BT_to_DEL = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_AT_to_DEL = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_BT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_AT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_FCT_to_OWLD = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_BT_to_Final = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_AT_to_Final = '" & notFound & "', " _
+        & "" & CurrentTable & ".Rescreen_counts_FCT_to_Final = '" & notFound & "';"
+        
         'Set First Screening, Final Screening, Final Status, Trial ID, and Event with data from Table All_XX_Screen_Only
         CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [Events_XX_Screen_Only] ON " & CurrentTable & ".Trial_Card = [Events_XX_Screen_Only].Trial_Card " _
         & "SET " _
-        & "" & CurrentTable & ".First_Screen = [Events_XX_Screen_Only].[First_Screening], " _
-        & "" & CurrentTable & ".[Last_Screen] = [Events_XX_Screen_Only].[" & columnFinal & "], " _
-        & "" & CurrentTable & ".Final_Sts_A_T = [Events_XX_Screen_Only].[Final_Sts_A_T], " _
         & "" & CurrentTable & ".Trial_ID = [Events_XX_Screen_Only].[Trial_ID], " _
-        & "" & CurrentTable & ".Event = [Events_XX_Screen_Only].[Event];"
+        & "" & CurrentTable & ".Event = [Events_XX_Screen_Only].[Event], " _
+        & "" & CurrentTable & ".Final_Sts_A_T = [Events_XX_Screen_Only].[Final_Sts_A_T], " _
+        & "" & CurrentTable & ".First_Screen = [Events_XX_Screen_Only].[First_Screening], " _
+        & "" & CurrentTable & ".[Last_Screen] = [Events_XX_Screen_Only].[" & columnFinal & "];"
         ' Debug.Print "Completed setting values in columns Trial_ID, Event, First_Screen, Last_Screen."
 
     Else
@@ -126,7 +128,7 @@ notFound = "Not Found"
 End Sub
 
 
-Public Sub Build_and_Set_Aggregated_Screen_TCSA()
+Public Sub zBuild_and_Set_Aggregated_Screen_Lifetime_TCSA()
 'This concats the screen values into a single field to show screen transitions.
 Dim myDateVarList As Variant  ' Used to cycle through each date column as an iterable
 Dim myIndex As Integer ' This is to get the prior screen
@@ -154,7 +156,7 @@ Dim myUpDate_SQL As String
     Else
         'Un trapped error
         'All_or_Events Global is empty or not expected value
-        Debug.Print "Function Build_and_Set_Aggregated_Screen_TCSA() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
+        Debug.Print "Function Build_and_Set_Aggregated_Screen_Lifetime_TCSA() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     'Open a pointer to current database
@@ -169,21 +171,33 @@ Dim myUpDate_SQL As String
     If All_or_Events = "All" Then
         Do While Not rst.EOF
             myIndex = 0 'This is the first date column in the allColumnsList, reset to 0 on each row
-            myScreenCount = 1
+            myScreenCount = 1 'Screen is a required field, cannot be empty
             curTrial_Card = rst![Trial_Card]
+            'Debug.Print ("Current Trial Card: " & curTrial_Card)
             
             For Each myDateVarList In allColumnsList
                 'Debug.Print vbCrLf & ("Prior allColumnsList(" & myIndex & "): " & allColumnsList(myIndex))
                 'Debug.Print ("Current myDateVarList: " & myDateVarList)
-                'Debug.Print ("Current Trial Card: " & curTrial_Card)
                         
                 'Assign the prior screen from the first date column
-'#BUG this is an issues for Splits
                 If myDateVarList = allColumnsList(0) Then
                     'I am on the first date column, set prior screen = [First_Screening]
                     priorScreenVar = rst![First_Screening]
                     currentScreenVar = rst("" & myDateVarList & "") ' rst![ & myDateVarList & ]
-                    aggregatedScreensVar = rst![First_Screening]
+'                    If priorScreenVar = "Not Found" _
+                        Or priorScreenVar = "POST BT Trial" _
+                        Or priorScreenVar = "POST AT Trial" _
+                        Or priorScreenVar = "POST FCT Trial" _
+                        Or priorScreenVar = "SPLIT" _
+                        Or priorScreenVar = "X/X" _
+                        Or priorScreenVar = "" _
+                        Or priorScreenVar = Empty _
+                        Then
+                        'Do not add this to the aggragate screening
+                        'Pass
+'                    Else
+                        aggregatedScreensVar = rst![First_Screening]
+'                    End If
                     'Leave myIndex set to zero here so it is lagging next time arround
                     'Debug.Print ("First date column of record row: " & myDateVarList)
                 ElseIf myDateVarList = allColumnsList.Item(allColumnsList.Count - 1) Then
@@ -248,17 +262,17 @@ Dim myUpDate_SQL As String
             'Write the Aggregated screens to the TC_Screen_Agg Table
         
         '    "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".[Aggregated_Screen] = " & aggregatedScreensVar & " WHERE (((TC_Screen_Agg.Trial_Card)=" & curTrial_Card & "));"
-            myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".Aggregated_Screen = """ & aggregatedScreensVar & """ WHERE (((" & CurrentTable & ".Trial_Card)=""" & curTrial_Card & """));"
-            ' Debug.Print (myUpDate_SQL)
+            myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".Aggregated_Screen_Final = """ & aggregatedScreensVar & """ WHERE (((" & CurrentTable & ".Trial_Card)=""" & curTrial_Card & """));"
+            'Debug.Print (myUpDate_SQL)
             dbs_Agg.Execute myUpDate_SQL
             
         '    "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".[Aggregated_Screen_Count] = " & myScreenCount & " WHERE (((TC_Screen_Agg.Trial_Card)=" & curTrial_Card & "));"
-            myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".Aggregated_Screen_Count = """ & myScreenCount & """ WHERE (((" & CurrentTable & ".Trial_Card)=""" & curTrial_Card & """));"
-            ' Debug.Print (myUpDate_SQL)
+            myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".Aggregated_Screen_Final_Count = """ & myScreenCount & """ WHERE (((" & CurrentTable & ".Trial_Card)=""" & curTrial_Card & """));"
+            'Debug.Print (myUpDate_SQL)
             dbs_Agg.Execute myUpDate_SQL
             
             myDateVarList = Empty
-            ' Debug.Print ("Next row in Table")
+            'Debug.Print ("Next row in Table")
             
             rst.MoveNext
             
@@ -276,12 +290,24 @@ Dim myUpDate_SQL As String
                 'Debug.Print ("Current Trial Card: " & curTrial_Card)
                         
                 'Assign the prior screen from the first date column
-'#BUG this is an issues for Splits
                 If myDateVarList = trialsOnlyList(0) Then
                     'I am on the first date column, set prior screen = [First_Screening]
                     priorScreenVar = rst![First_Screening]
                     currentScreenVar = rst("" & myDateVarList & "") ' rst![ & myDateVarList & ]
-                    aggregatedScreensVar = rst![First_Screening]
+'                    If priorScreenVar = "Not Found" _
+                        Or priorScreenVar = "POST BT Trial" _
+                        Or priorScreenVar = "POST AT Trial" _
+                        Or priorScreenVar = "POST FCT Trial" _
+                        Or priorScreenVar = "SPLIT" _
+                        Or priorScreenVar = "X/X" _
+                        Or priorScreenVar = "" _
+                        Or priorScreenVar = Empty _
+                        Then
+                        'Do not add this to the aggragate screening
+                        'Pass
+'                    Else
+                        aggregatedScreensVar = rst![First_Screening]
+'                    End If
                     'Leave myIndex set to zero here so it is lagging next time arround
                     'Debug.Print ("First date column of record row: " & myDateVarList)
                 ElseIf myDateVarList = trialsOnlyList.Item(trialsOnlyList.Count - 1) Then
@@ -344,12 +370,12 @@ Dim myUpDate_SQL As String
             'Write the Aggregated screens to the TC_Screen_Agg Table
         
         '    "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".[Aggregated_Screen] = " & aggregatedScreensVar & " WHERE (((TC_Screen_Agg.Trial_Card)=" & curTrial_Card & "));"
-            myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".Aggregated_Screen = """ & aggregatedScreensVar & """ WHERE (((" & CurrentTable & ".Trial_Card)=""" & curTrial_Card & """));"
+            myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".Aggregated_Screen_Final = """ & aggregatedScreensVar & """ WHERE (((" & CurrentTable & ".Trial_Card)=""" & curTrial_Card & """));"
             ' Debug.Print (myUpDate_SQL)
             dbs_Agg.Execute myUpDate_SQL
             
         '    "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".[Aggregated_Screen_Count] = " & myScreenCount & " WHERE (((TC_Screen_Agg.Trial_Card)=" & curTrial_Card & "));"
-            myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".Aggregated_Screen_Count = """ & myScreenCount & """ WHERE (((" & CurrentTable & ".Trial_Card)=""" & curTrial_Card & """));"
+            myUpDate_SQL = "UPDATE DISTINCTROW " & CurrentTable & " SET " & CurrentTable & ".Aggregated_Screen_Final_Count = """ & myScreenCount & """ WHERE (((" & CurrentTable & ".Trial_Card)=""" & curTrial_Card & """));"
             ' Debug.Print (myUpDate_SQL)
             dbs_Agg.Execute myUpDate_SQL
             
@@ -363,7 +389,7 @@ Dim myUpDate_SQL As String
     Else
         'Un trapped error
         'All_or_Events Global is empty or not expected value
-        Debug.Print "Function Build_and_Set_Aggregated_Screen_TCSA() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
+        Debug.Print "Function Build_and_Set_Aggregated_Screen_Lifetime_TCSA() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     rst.Close
@@ -374,7 +400,7 @@ Dim myUpDate_SQL As String
 
 End Sub
 
-Public Sub Build_and_Set_Aggregated_Screen_OWLD_Limit_TCSA()
+Public Sub zBuild_and_Set_Aggregated_Screen_OWLD_Limit_TCSA()
 'This concats the screen values into a single field to show screen transitions upto and including OWLD.
 Dim myDateVarList As Variant  ' Used to cycle through each date column as an iterable
 Dim myIndex As Integer ' This is to get the prior screen
@@ -401,6 +427,8 @@ Dim myUpDate_SQL As String
         mySQLstring = "SELECT Events_XX_Screen_Only.* FROM Events_XX_Screen_Only INNER JOIN Events_TC_Screen_Agg ON Events_XX_Screen_Only.Trial_Card = Events_TC_Screen_Agg.Trial_Card;"
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function Build_and_Set_Aggregated_Screen_OWLD_Limit_TCSA() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     'Open a pointer to current database
@@ -431,7 +459,20 @@ Dim myUpDate_SQL As String
                         'I am on the first date column, set prior screen = [First_Screening]
                         priorScreenVar = rst![First_Screening]
                         currentScreenVar = rst("" & myDateVarList & "") ' rst![ & myDateVarList & ]
+'                        If priorScreenVar = "Not Found" _
+                        Or priorScreenVar = "POST BT Trial" _
+                        Or priorScreenVar = "POST AT Trial" _
+                        Or priorScreenVar = "POST FCT Trial" _
+                        Or priorScreenVar = "SPLIT" _
+                        Or priorScreenVar = "X/X" _
+                        Or priorScreenVar = "" _
+                        Or priorScreenVar = Empty _
+                        Then
+                        'Do not add this to the aggragate screening
+                        'Pass
+'                    Else
                         aggregatedScreensVar = rst![First_Screening]
+'                    End If
                         'Leave myIndex set to zero here so it is lagging next time arround
                         'Debug.Print ("First date column of record row: " & myDateVarList)
                     ElseIf myDateVarList = allColumnsList.Item(allColumnsList.Count - 1) Then
@@ -616,13 +657,14 @@ Dim myUpDate_SQL As String
     
     rst.Close
     dbs.Close
+    dbs_Agg.Close
     
     ' Debug.Print vbCrLf & "The X/X Trial Cards Update Query completed." & vbCrLf
 
 End Sub
 
 
-Public Sub Build_and_Set_Aggregated_Screen_DEL_Limit_TCSA()
+Public Sub zBuild_and_Set_Aggregated_Screen_DEL_Limit_TCSA()
 'This concats the screen values into a single field to show screen transitions upto and including DEL.
 Dim myDateVarList As Variant  ' Used to cycle through each date column as an iterable
 Dim myIndex As Integer ' This is to get the prior screen
@@ -649,6 +691,8 @@ Dim myUpDate_SQL As String
         mySQLstring = "SELECT Events_XX_Screen_Only.* FROM Events_XX_Screen_Only INNER JOIN Events_TC_Screen_Agg ON Events_XX_Screen_Only.Trial_Card = Events_TC_Screen_Agg.Trial_Card;"
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function Build_and_Set_Aggregated_Screen_DEL_Limit_TCSA() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     'Open a pointer to current database
@@ -679,7 +723,20 @@ Dim myUpDate_SQL As String
                         'I am on the first date column, set prior screen = [First_Screening]
                         priorScreenVar = rst![First_Screening]
                         currentScreenVar = rst("" & myDateVarList & "") ' rst![ & myDateVarList & ]
+                        If priorScreenVar = "Not Found" _
+                        Or priorScreenVar = "POST BT Trial" _
+                        Or priorScreenVar = "POST AT Trial" _
+                        Or priorScreenVar = "POST FCT Trial" _
+                        Or priorScreenVar = "SPLIT" _
+                        Or priorScreenVar = "X/X" _
+                        Or priorScreenVar = "" _
+                        Or priorScreenVar = Empty _
+                        Then
+                        'Do not add this to the aggragate screening
+                        'Pass
+                    Else
                         aggregatedScreensVar = rst![First_Screening]
+                    End If
                         'Leave myIndex set to zero here so it is lagging next time arround
                         'Debug.Print ("First date column of record row: " & myDateVarList)
                     ElseIf myDateVarList = allColumnsList.Item(allColumnsList.Count - 1) Then
@@ -778,7 +835,20 @@ Dim myUpDate_SQL As String
                     'I am on the first date column, set prior screen = [First_Screening]
                     priorScreenVar = rst![First_Screening]
                     currentScreenVar = rst("" & myDateVarList & "") ' rst![ & myDateVarList & ]
-                    aggregatedScreensVar = rst![First_Screening]
+                    If priorScreenVar = "Not Found" _
+                        Or priorScreenVar = "POST BT Trial" _
+                        Or priorScreenVar = "POST AT Trial" _
+                        Or priorScreenVar = "POST FCT Trial" _
+                        Or priorScreenVar = "SPLIT" _
+                        Or priorScreenVar = "X/X" _
+                        Or priorScreenVar = "" _
+                        Or priorScreenVar = Empty _
+                        Then
+                        'Do not add this to the aggragate screening
+                        'Pass
+                    Else
+                        aggregatedScreensVar = rst![First_Screening]
+                    End If
                     'Leave myIndex set to zero here so it is lagging next time arround
                     'Debug.Print ("First date column of record row: " & myDateVarList)
                 ElseIf myDateVarList = trialsOnlyList.Item(trialsOnlyList.Count - 1) Then
@@ -864,6 +934,7 @@ Dim myUpDate_SQL As String
     
     rst.Close
     dbs.Close
+    dbs_Agg.Close
     
     ' Debug.Print vbCrLf & "The X/X Trial Cards Update Query completed." & vbCrLf
 
