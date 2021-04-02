@@ -418,8 +418,10 @@ AddingToMyDateLists 'Run the list builder
 CurrentTable = "All_TC_Screen_Agg"
 All_or_Events = "All"
 SetFirstScreensAndEvents_TCSA 'This is to load or reload the screenings into the Combined_Screenings Table
-Build_and_Set_Aggregated_Screen_TCSA
-Build_and_Set_Aggregated_Screen_OWLD_Limit_TCSA
+Build_and_Set_Aggregated_Screen_and_Counts_TCSA
+'zBuild_and_Set_Aggregated_Screen_Lifetime_TCSA
+'zBuild_and_Set_Aggregated_Screen_OWLD_Limit_TCSA
+'zBuild_and_Set_Aggregated_Screen_DEL_Limit_TCSA
 
 CurrentTable = Empty
 All_or_Events = Empty
@@ -427,8 +429,10 @@ All_or_Events = Empty
 CurrentTable = "Events_TC_Screen_Agg"
 All_or_Events = "Events"
 SetFirstScreensAndEvents_TCSA 'This is to load or reload the screenings into the Combined_Screenings Table
-Build_and_Set_Aggregated_Screen_TCSA
-Build_and_Set_Aggregated_Screen_OWLD_Limit_TCSA
+Build_and_Set_Aggregated_Screen_and_Counts_TCSA
+'zBuild_and_Set_Aggregated_Screen_Lifetime_TCSA
+'zBuild_and_Set_Aggregated_Screen_OWLD_Limit_TCSA
+'zBuild_and_Set_Aggregated_Screen_DEL_Limit_TCSA
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
@@ -466,7 +470,6 @@ All_or_Events = "All"
 SetFirstScreensAndEvents_SOSM
 Build_and_Set_Aggregated_Screen_SOSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
 Set_SparseMatrix_Counts_SMC
-Set_SparseMatrix_Counts_SMC_DEL
 
 CurrentTable = Empty
 SparseRefTable = Empty
@@ -479,7 +482,6 @@ All_or_Events = "All"
 SetFirstScreensAndEvents_SOSM
 Build_and_Set_Aggregated_Screen_SOSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
 Set_SparseMatrix_Counts_SMC
-Set_SparseMatrix_Counts_SMC_DEL
 
 CurrentTable = Empty
 SparseRefTable = Empty
@@ -493,7 +495,6 @@ All_or_Events = "Events"
 SetFirstScreensAndEvents_SOSM
 Build_and_Set_Aggregated_Screen_SOSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
 Set_SparseMatrix_Counts_SMC
-Set_SparseMatrix_Counts_SMC_DEL
 
 CurrentTable = Empty
 SparseRefTable = Empty
@@ -506,7 +507,6 @@ All_or_Events = "Events"
 SetFirstScreensAndEvents_SOSM
 Build_and_Set_Aggregated_Screen_SOSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
 Set_SparseMatrix_Counts_SMC
-Set_SparseMatrix_Counts_SMC_DEL
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
@@ -545,7 +545,6 @@ All_or_Events = "All"
 SetFirstScreensAndEvents_XXSM
 Build_and_Set_Aggregated_Screen_XXSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
 Set_SparseMatrix_Counts_XXSMC
-Set_SparseMatrix_Counts_XXSMC_DEL
 
 CurrentTable = Empty
 SparseRefTable = Empty
@@ -557,7 +556,6 @@ All_or_Events = "Events"
 SetFirstScreensAndEvents_XXSM
 Build_and_Set_Aggregated_Screen_XXSM 'This builds the sparse matrix that has a 0 if no change over the prior or has a 1 if there was a change.
 Set_SparseMatrix_Counts_XXSMC
-Set_SparseMatrix_Counts_XXSMC_DEL
 
 'Empty the lists and varibles used
 ClearMyDateLists 'Empty the lists that were used
