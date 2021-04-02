@@ -1,17 +1,10 @@
 Option Compare Database
-'This has issues with the way that splits are handeled and the way that cards are handeled prior to the Event
-'The use of SPLIT until the actual split occures causes counting issues because the screening changes from SPLIT to the actual screening
 'The use of NotFound until the trial card is actually written at Event just looks messy, would like to change this
 Option Explicit
 
 
 Public Sub SetFirstScreensAndEvents_XXSO()
-'This is to load or reload the screenings into the Screenings_Only Table _
-1st text <Not Found> is entered in every field _
-2nd Final is loaded into final(far most right date) and into [First_Screening] _
-3rd FCT is loaded in to FCT date and update of [First_Screening] _
-4th AT is loaded in to AT date and update of [First_Screening] _
-5th BT is loaded in to BT date and update of [First_Screening]
+'This is to load or reload the screenings into the Screen_Only Table
 
 'Set all date columns to <Not Found>
 Dim myDateVarList As Variant
@@ -35,6 +28,8 @@ notFound = "Not Found"
         Next myDateVarList
     Else
         'Un trapped error
+        'All_or_Events Global is empty or not expected value
+        Debug.Print "Function SetFirstScreensAndEvents_XXSO() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
     End If
     
     myDateVarList = Empty
@@ -60,7 +55,6 @@ notFound = "Not Found"
     ' Debug.Print vbCrLf & "Completed the" & CurrentTable & "table data set with place holder values Update Query."
 
     'Set Final Screening as Final and as First
-'#BUG this is an issues for Splits
     CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
     & "SET " _
     & "" & CurrentTable & ".First_Screening = [" & beanFinal & "].[Screening], " _
@@ -97,6 +91,12 @@ notFound = "Not Found"
     & "" & CurrentTable & ".[" & columnOWLD & "] = [" & beanOWLD & "].[Screening];"
     ' Debug.Print vbCrLf & "Completed setting OWLD Event Screening"
 
+    'Set DEL Event Screening, DEL Milestone
+    CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanDEL & "] ON " & CurrentTable & ".Trial_Card = [" & beanDEL & "].Trial_Card " _
+    & "SET " _
+    & "" & CurrentTable & ".[" & columnDEL & "] = [" & beanDEL & "].[Screening];"
+    ' Debug.Print vbCrLf & "Completed setting DEL Event Screening
+    
     ' Debug.Print vbCrLf & "The Trials First Screenings and OWLD Update Query completed." & vbCrLf
 
 End Sub
@@ -321,7 +321,6 @@ End Sub
 Public Sub SetTrialCardSplits_XXSO()
 'This changes the screening from <Not Found> to <SPLIT> _
 where the trial card was entered after the actual inspection.
-'#BUG this is an issues for Splits
 
 Dim myDateVarList As Variant
 
@@ -329,12 +328,24 @@ Dim myDateVarList As Variant
     If All_or_Events = "All" Then
         'Run for BT Event
         For Each myDateVarList In allColumnsList
-            CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
-            & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
-            & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
-            & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
-            & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
-            & "AND ((" & CurrentTable & ".Event)='BT'));"
+            If allColumnsList.IndexOf(myDateVarList, 0) = allColumnsList_BT Then
+                'Re-Set First Screen to Split AND Event date column to Split
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".First_Screening = 'SPLIT', " _
+                & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE ((([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='BT'));"
+            ElseIf allColumnsList.IndexOf(myDateVarList, 0) < allColumnsList_BT Then
+                'Do Nothing, leave marked as "Not Found"
+            Else
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
+                & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='BT'));"
+            End If
             ' Debug.Print "done with column table: " & myDateVarList & " For BT Event Splits."
         Next myDateVarList
 
@@ -342,12 +353,24 @@ Dim myDateVarList As Variant
         
         'Run for AT Event
         For Each myDateVarList In allColumnsList
-            CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
-            & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
-            & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
-            & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
-            & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
-            & "AND ((" & CurrentTable & ".Event)='AT'));"
+            If allColumnsList.IndexOf(myDateVarList, 0) = allColumnsList_AT Then
+                'Re-Set First Screen to Split AND Event date column to Split
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".First_Screening = 'SPLIT', " _
+                & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE ((([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='AT'));"
+            ElseIf allColumnsList.IndexOf(myDateVarList, 0) < allColumnsList_AT Then
+                'Do Nothing, leave marked as "Not Found"
+            Else
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
+                & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='AT'));"
+            End If
             ' Debug.Print "done with column table: " & myDateVarList & " For AT Event Splits."
         Next myDateVarList
         
@@ -355,24 +378,48 @@ Dim myDateVarList As Variant
         
         'Run for FCT Event
         For Each myDateVarList In allColumnsList
-            CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
-            & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
-            & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
-            & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
-            & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
-            & "AND ((" & CurrentTable & ".Event)='FCT'));"
+            If allColumnsList.IndexOf(myDateVarList, 0) = allColumnsList_FCT Then
+                'Re-Set First Screen to Split AND Event date column to Split
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".First_Screening = 'SPLIT', " _
+                & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE ((([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='FCT'));"
+            ElseIf allColumnsList.IndexOf(myDateVarList, 0) < allColumnsList_FCT Then
+                'Do Nothing, leave marked as "Not Found"
+            Else
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
+                & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='FCT'));"
+            End If
             ' Debug.Print "done with column table: " & myDateVarList & " For FCT Event Splits."
         Next myDateVarList
                 
     ElseIf All_or_Events = "Events" Then
         'Run for BT Event
         For Each myDateVarList In trialsOnlyList
-            CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
-            & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
-            & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
-            & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
-            & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
-            & "AND ((" & CurrentTable & ".Event)='BT'));"
+            If trialsOnlyList.IndexOf(myDateVarList, 0) = trialsOnlyList_BT Then
+                'Re-Set First Screen to Split AND Event date column to Split
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".First_Screening = 'SPLIT', " _
+                & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE ((([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='BT'));"
+            ElseIf trialsOnlyList.IndexOf(myDateVarList, 0) < trialsOnlyList_BT Then
+                'Do Nothing, leave marked as "Not Found"
+            Else
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
+                & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='BT'));"
+            End If
             ' Debug.Print "done with column table: " & myDateVarList & " For BT Event Splits."
         Next myDateVarList
         
@@ -380,12 +427,24 @@ Dim myDateVarList As Variant
         
         'Run for AT Event
         For Each myDateVarList In trialsOnlyList
-            CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
-            & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
-            & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
-            & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
-            & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
-            & "AND ((" & CurrentTable & ".Event)='AT'));"
+            If trialsOnlyList.IndexOf(myDateVarList, 0) = trialsOnlyList_AT Then
+                'Re-Set First Screen to Split AND Event date column to Split
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".First_Screening = 'SPLIT', " _
+                & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE ((([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='AT'));"
+            ElseIf trialsOnlyList.IndexOf(myDateVarList, 0) < trialsOnlyList_AT Then
+                'Do Nothing, leave marked as "Not Found"
+            Else
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
+                & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='AT'));"
+            End If
             ' Debug.Print "done with column table: " & myDateVarList & " For AT Event Splits."
         Next myDateVarList
         
@@ -393,12 +452,24 @@ Dim myDateVarList As Variant
         
         'Run for FCT Event
         For Each myDateVarList In trialsOnlyList
-            CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
-            & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
-            & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
-            & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
-            & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
-            & "AND ((" & CurrentTable & ".Event)='FCT'));"
+            If trialsOnlyList.IndexOf(myDateVarList, 0) = trialsOnlyList_FCT Then
+                'Re-Set First Screen to Split AND Event date column to Split
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".First_Screening = 'SPLIT', " _
+                & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE ((([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='FCT'));"
+            ElseIf trialsOnlyList.IndexOf(myDateVarList, 0) < trialsOnlyList_FCT Then
+                'Do Nothing, leave marked as "Not Found"
+            Else
+                CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+                & "SET " & CurrentTable & ".[" & myDateVarList & "] = 'SPLIT'" _
+                & "WHERE (((" & CurrentTable & ".[" & myDateVarList & "])='Not Found') " _
+                & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+                & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01') " _
+                & "AND ((" & CurrentTable & ".Event)='FCT'));"
+            End If
             ' Debug.Print "done with column table: " & myDateVarList & " For FCT Event Splits."
         Next myDateVarList
         
@@ -411,27 +482,25 @@ Dim myDateVarList As Variant
     myDateVarList = Empty
     
     'Check for All Reports or only Events
-    If All_or_Events = "All" Then
-        '#Fix BUG here by going back and resetting the [TABLE].[First_Screening] to "SPLIT"
-        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
-        & "SET " & CurrentTable & ".First_Screening = 'SPLIT'" _
-        & "WHERE (((" & CurrentTable & ".[" & allColumnsList(0) & "])='SPLIT') " _
-        & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
-        & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01'));"
-    
-    ElseIf All_or_Events = "Events" Then
-        '#Fix BUG here by going back and resetting the [TABLE].[First_Screening] to "SPLIT"
-        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
-        & "SET " & CurrentTable & ".First_Screening = 'SPLIT'" _
-        & "WHERE (((" & CurrentTable & ".[" & trialsOnlyList(0) & "])='SPLIT') " _
-        & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
-        & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01'));"
-        
-    Else
-        'Un trapped error
-        'All_or_Events Global is empty or not expected value
-        Debug.Print "Function SetTrialCardSplits_XXSO() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
-    End If
+'    If All_or_Events = "All" Then
+'        '#Fix BUG here by going back and resetting the [TABLE].[First_Screening] to "SPLIT"
+'        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+'        & "SET " & CurrentTable & ".First_Screening = 'SPLIT'" _
+'        & "WHERE (((" & CurrentTable & ".[" & allColumnsList(0) & "])='SPLIT') " _
+'        & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+'        & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01'));"
+'    ElseIf All_or_Events = "Events" Then
+'        '#Fix BUG here by going back and resetting the [TABLE].[First_Screening] to "SPLIT"
+'        CurrentDb.Execute "UPDATE DISTINCTROW " & CurrentTable & " RIGHT JOIN [" & beanFinal & "] ON " & CurrentTable & ".Trial_Card = [" & beanFinal & "].Trial_Card " _
+'        & "SET " & CurrentTable & ".First_Screening = 'SPLIT'" _
+'        & "WHERE (((" & CurrentTable & ".[" & trialsOnlyList(0) & "])='SPLIT') " _
+'        & "AND (([" & CurrentTable & "]![Final_Sts_A_T])<>'X/X') " _
+'        & "AND ((Right([" & CurrentTable & "]![Trial_Card],2))<>'01'));"
+'    Else
+'        'Un trapped error
+'        'All_or_Events Global is empty or not expected value
+'        Debug.Print "Function SetTrialCardSplits_XXSO() was passed empty or not expected value with GLOBAL All_or_Events:= " & All_or_Events & "."
+'    End If
     
     ' Debug.Print vbCrLf & "The Split Trial Cards Update Query completed." & vbCrLf
 
